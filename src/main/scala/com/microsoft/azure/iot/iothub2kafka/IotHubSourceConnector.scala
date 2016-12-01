@@ -1,0 +1,91 @@
+// Copyright (c) Microsoft. All rights reserved.
+
+package com.microsoft.azure.iot.kafka.connect
+
+import java.util
+
+import com.microsoft.azure.eventhubs.PartitionReceiver
+import com.microsoft.azure.servicebus.ConnectionStringBuilder
+import com.typesafe.scalalogging.LazyLogging
+import org.apache.kafka.common.config.ConfigDef
+import org.apache.kafka.connect.connector.Task
+import org.apache.kafka.connect.source.SourceConnector
+import org.json4s.jackson.Serialization.write
+
+import scala.collection.JavaConverters._
+import scala.collection.mutable
+
+class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSerialization {
+
+  private[this] var props: Map[String, String] = _
+
+  override def taskClass(): Class[_ <: Task] = classOf[IotHubSourceTask]
+
+  override def taskConfigs(maxTasks: Int): util.List[util.Map[String, String]] = {
+    val configList = new util.ArrayList[util.Map[String, String]]()
+
+    val partitionsCount = this.props(IotHubSourceConfig.IotHubPartitions).toInt
+    val offsets = if (this.props.contains(IotHubSourceConfig.IotHubOffset)) {
+      this.props(IotHubSourceConfig.IotHubOffset).split(",").map(_.trim)
+    } else {
+      Array.empty[String]
+    }
+
+    // Here we divide the partitions amongst the tasks in a round robin fashion.
+    // So, say there are 5 partitions and 3 tasks, then task 1 gets partitions 0 and 3,
+    // task 2 gets partitions 1 and 4 and task 3 gets partition 2.
+    for (i <- 0 until maxTasks) {
+
+      var partitionOffsetsMap = mutable.Map.empty[String, String]
+      var partition = i
+      while (partition < partitionsCount) {
+        val partitionOffset = if (partition < offsets.length && offsets(partition).trim.length > 0) {
+          offsets(partition)
+        }
+        else {
+          PartitionReceiver.START_OF_STREAM
+        }
+        partitionOffsetsMap += (partition.toString -> partitionOffset)
+        partition = partition + maxTasks
+      }
+
+      if (partitionOffsetsMap.nonEmpty) {
+        val config = new util.HashMap[String, String](this.props.asJava)
+        val partitionOffsetsStr = write(partitionOffsetsMap)
+        config.put(IotHubSourceConfig.TaskPartitionOffsetsMap, partitionOffsetsStr)
+        configList.add(config)
+      }
+    }
+    configList
+  }
+
+  override def stop(): Unit = {
+    logger.info("Stopping IotHubSourceConnector")
+  }
+
+  override def config(): ConfigDef = IotHubSourceConfig.getConfig
+
+  override def start(props: util.Map[String, String]): Unit = {
+
+    logger.info("Starting IotHubSourceConnector")
+
+    val parsedProps = IotHubSourceConfig.getConfig.parse(props)
+    val iotHubConnectionString = new ConnectionStringBuilder(
+      parsedProps.get(IotHubSourceConfig.EventHubCompatibleNamespace).toString,
+      parsedProps.get(IotHubSourceConfig.EventHubCompatibleName).toString,
+      parsedProps.get(IotHubSourceConfig.IotHubAccessKeyName).toString,
+      parsedProps.get(IotHubSourceConfig.IotHubAccessKeyValue).toString).toString
+
+    this.props = Map[String, String](
+      IotHubSourceConfig.EventHubCompatibleConnectionString -> iotHubConnectionString,
+      IotHubSourceConfig.IotHubOffset -> parsedProps.get(IotHubSourceConfig.IotHubOffset).toString,
+      IotHubSourceConfig.BatchSize -> parsedProps.get(IotHubSourceConfig.BatchSize).toString,
+      IotHubSourceConfig.KafkaTopic -> parsedProps.get(IotHubSourceConfig.KafkaTopic).toString,
+      IotHubSourceConfig.IotHubConsumerGroup -> parsedProps.get(IotHubSourceConfig.IotHubConsumerGroup).toString,
+      IotHubSourceConfig.IotHubPartitions -> parsedProps.get(IotHubSourceConfig.IotHubPartitions).toString,
+      IotHubSourceConfig.IotHubStartTime -> parsedProps.get(IotHubSourceConfig.IotHubStartTime).toString
+    )
+  }
+
+  override def version(): String = getClass.getPackage.getImplementationVersion
+}
