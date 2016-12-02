@@ -9,7 +9,7 @@ allows getting the telemetry data sent by Azure IoT Hub connected devices to you
 ### Configuration
 
 All the configuration settings required to run Kafka Connector for IoT Hub are in the
-"[connect-iothub-source.properties](https://github.com/Azure/toketi-kafka-connect-iothub/blob/master/connect-iothub-source.properties)" file. The properties related to Azure IoT Hub can be obtained from the
+"[connect-iothub-source.properties](connect-iothub-source.properties)" file. The properties related to Azure IoT Hub can be obtained from the
 [Azure Portal](https://portal.azure.com). Here are the configurable values -
 
 | Config | Value Type | Required | Default Value | Description |
@@ -74,7 +74,7 @@ Alternatively, you can directly download the jar file for Kafka Connect IoT Hub 
 
 2. Binplace the jar file in the Kafka installation libs folder (usually under KAFKA_HOME/libs).
 
-3. Update the config file "[connect-iothub-source.properties](https://github.com/Azure/toketi-kafka-connect-iothub/blob/master/connect-iothub-source.properties)" with the appropriate values as described in the section
+3. Update the config file "[connect-iothub-source.properties](connect-iothub-source.properties)" with the appropriate values as described in the section
 above. Binplace the file "connect-iothub-source.properties" in the Kafka installation config folder (usually under
   KAFKA_HOME/config).
 
@@ -120,7 +120,7 @@ different schemas to their respective topics. (For example, for a device recordi
 ## Contribute Code
 
 If you want/plan to contribute, we ask you to sign a [CLA](https://cla.microsoft.com/)
-(Contribution license Agreement). A friendly bot will remind you about it when you submit
+(Contribution License Agreement). A friendly bot will remind you about it when you submit
 a pull-request.
 
 If you are sending a pull request, we kindly request to check the code style with IntelliJ IDEA,

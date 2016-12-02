@@ -23,7 +23,7 @@ class IotHubPartitionSource(val dataReceiver: DataReceiver,
 
   def getRecords: util.List[SourceRecord] = {
 
-    logger.debug("Polling for data")
+    logger.debug(s"Polling for data from Partition $partition")
     val list = ListBuffer.empty[SourceRecord]
     try {
       val messages: Iterable[IotMessage] = this.dataReceiver.receiveData(batchSize)
