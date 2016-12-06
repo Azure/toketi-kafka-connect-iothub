@@ -70,7 +70,7 @@ all the dependencies embedded in it.
 ```
 sbt assembly
 ```
-Alternatively, you can directly download the jar file for Kafka Connect IoT Hub from [here](https://dl.bintray.com/microsoftazuretoketi/toketi-repo/com/microsoft/azure/iot/kafka-connect-iothub_2.11/0.5/kafka-connect-iothub-assembly_2.11-0.5.jar).
+Alternatively, you can directly download the jar file for Kafka Connect IoT Hub from [here](https://github.com/Azure/toketi-kafka-connect-iothub/releases/download/v0.5/kafka-connect-iothub-assembly_2.11-0.5.jar).
 
 2. Binplace the jar file in the Kafka installation libs folder (usually under KAFKA_HOME/libs).
 
