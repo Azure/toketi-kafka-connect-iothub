@@ -3,7 +3,7 @@
 package com.microsoft.azure.iot.kafka.connect
 
 import com.microsoft.azure.iot.kafka.connect.testhelpers.TestConfig
-import org.apache.kafka.common.config.ConfigException
+import org.apache.kafka.connect.errors.ConnectException
 import org.json4s.jackson.Serialization.read
 import org.scalatest.{FlatSpec, GivenWhenThen}
 
@@ -56,7 +56,7 @@ class IotHubSourceConnectorTest extends FlatSpec with GivenWhenThen with JsonSer
     val connector = new IotHubSourceConnector
 
     When("IotHubSourceConnector.Start is called, ConfigException is thrown")
-    intercept[ConfigException] {
+    intercept[ConnectException] {
       connector.start(inputProperties)
     }
   }

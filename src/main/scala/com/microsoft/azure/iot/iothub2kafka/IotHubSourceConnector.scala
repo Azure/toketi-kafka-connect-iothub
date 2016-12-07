@@ -7,12 +7,14 @@ import java.util
 import com.microsoft.azure.eventhubs.PartitionReceiver
 import com.microsoft.azure.servicebus.ConnectionStringBuilder
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.kafka.common.config.ConfigDef
+import org.apache.kafka.common.config.{ConfigDef, ConfigException}
 import org.apache.kafka.connect.connector.Task
+import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.source.SourceConnector
 import org.json4s.jackson.Serialization.write
 
 import scala.collection.JavaConverters._
+import collection.JavaConversions._
 import scala.collection.mutable
 
 class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSerialization {
@@ -63,27 +65,36 @@ class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSe
     logger.info("Stopping IotHubSourceConnector")
   }
 
-  override def config(): ConfigDef = IotHubSourceConfig.getConfig
+  override def config(): ConfigDef = IotHubSourceConfig.configDef
 
   override def start(props: util.Map[String, String]): Unit = {
 
     logger.info("Starting IotHubSourceConnector")
 
-    val parsedProps = IotHubSourceConfig.getConfig.parse(props)
+    var iotHubSourceConfigOption: Option[IotHubSourceConfig] = None
+
+    try {
+      iotHubSourceConfigOption = Some(IotHubSourceConfig.getConfig(props.toMap))
+    } catch {
+      case ex: ConfigException ⇒ throw new ConnectException("Could not start IotHubSourceConnector due to a " +
+        "configuration exception", ex)
+    }
+
+    val iotHubSourceConfig = iotHubSourceConfigOption.get
     val iotHubConnectionString = new ConnectionStringBuilder(
-      parsedProps.get(IotHubSourceConfig.EventHubCompatibleNamespace).toString,
-      parsedProps.get(IotHubSourceConfig.EventHubCompatibleName).toString,
-      parsedProps.get(IotHubSourceConfig.IotHubAccessKeyName).toString,
-      parsedProps.get(IotHubSourceConfig.IotHubAccessKeyValue).toString).toString
+      iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleNamespace),
+      iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleName),
+      iotHubSourceConfig.getString(IotHubSourceConfig.IotHubAccessKeyName),
+      iotHubSourceConfig.getString(IotHubSourceConfig.IotHubAccessKeyValue)).toString
 
     this.props = Map[String, String](
       IotHubSourceConfig.EventHubCompatibleConnectionString -> iotHubConnectionString,
-      IotHubSourceConfig.IotHubOffset -> parsedProps.get(IotHubSourceConfig.IotHubOffset).toString,
-      IotHubSourceConfig.BatchSize -> parsedProps.get(IotHubSourceConfig.BatchSize).toString,
-      IotHubSourceConfig.KafkaTopic -> parsedProps.get(IotHubSourceConfig.KafkaTopic).toString,
-      IotHubSourceConfig.IotHubConsumerGroup -> parsedProps.get(IotHubSourceConfig.IotHubConsumerGroup).toString,
-      IotHubSourceConfig.IotHubPartitions -> parsedProps.get(IotHubSourceConfig.IotHubPartitions).toString,
-      IotHubSourceConfig.IotHubStartTime -> parsedProps.get(IotHubSourceConfig.IotHubStartTime).toString
+      IotHubSourceConfig.IotHubOffset -> iotHubSourceConfig.getString(IotHubSourceConfig.IotHubOffset),
+      IotHubSourceConfig.BatchSize -> iotHubSourceConfig.getInt(IotHubSourceConfig.BatchSize).toString,
+      IotHubSourceConfig.KafkaTopic -> iotHubSourceConfig.getString(IotHubSourceConfig.KafkaTopic),
+      IotHubSourceConfig.IotHubConsumerGroup -> iotHubSourceConfig.getString(IotHubSourceConfig.IotHubConsumerGroup),
+      IotHubSourceConfig.IotHubPartitions -> iotHubSourceConfig.getInt(IotHubSourceConfig.IotHubPartitions).toString,
+      IotHubSourceConfig.IotHubStartTime -> iotHubSourceConfig.getString(IotHubSourceConfig.IotHubStartTime)
     )
   }
 

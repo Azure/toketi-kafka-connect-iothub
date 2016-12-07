@@ -19,8 +19,8 @@ libraryDependencies ++= {
   val json4sVersion = "3.5.0"
 
   Seq(
-    "org.apache.kafka" % "connect-api" % kafkaVersion,
-    "org.apache.kafka" % "connect-json" % kafkaVersion,
+    "org.apache.kafka" % "connect-api" % kafkaVersion % "provided",
+    "org.apache.kafka" % "connect-json" % kafkaVersion % "provided",
     "com.microsoft.azure" % "azure-eventhubs" % azureEventHubSDKVersion,
     "org.json4s" %% "json4s-jackson" % json4sVersion,
     "com.typesafe.scala-logging" %% "scala-logging" % scalaLoggingVersion,
