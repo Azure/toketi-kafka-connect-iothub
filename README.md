@@ -55,7 +55,7 @@ BatchSize=100
 * You need to have an Azure IoT Hub from which you want to copy data to Kafka. Get started
   [here](https://docs.microsoft.com/en-us/azure/iot-hub/).
 
-* You also need to have Apache Kafka installed and running. Get started
+* You also need to have Apache Kafka v0.10 installed and running. Get started
 [here](https://kafka.apache.org/documentation#quickstart).
 
 ###### Steps

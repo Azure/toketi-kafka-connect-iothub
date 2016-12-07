@@ -11,8 +11,10 @@ import org.scalatest.{FlatSpec, GivenWhenThen}
 
 class IotHubSourceTaskTest extends FlatSpec with GivenWhenThen with JsonSerialization {
 
+  // This test is ignored as the configuration in the test application.conf has no values.
+  // After updating the application.conf with the right values, this test can be run.
   "IotHubSourceTask start"
-  ignore should "initialize all properties" in {
+  it should "initialize all properties" in {
 
     Given("A list of properties for IotHubSourceTask")
     val props: util.Map[String, String] = TestConfig.sourceTaskTestProps
