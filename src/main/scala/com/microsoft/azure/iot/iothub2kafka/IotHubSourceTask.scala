@@ -7,6 +7,7 @@ import java.util
 import java.util.Collections
 
 import com.typesafe.scalalogging.LazyLogging
+import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.source.{SourceRecord, SourceTask}
 import org.json4s.jackson.Serialization.read
 
@@ -33,7 +34,7 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
       case NonFatal(e) =>
         val errorMsg = s"Error while polling for data. Exception - ${e.toString} Stack trace - ${e.printStackTrace()}"
         logger.error(errorMsg)
-        throw e
+        throw new ConnectException("Error while polling for data", e)
     }
     logger.info(s"Polling for data - Obtained ${list.length} SourceRecords from IotHub")
     list

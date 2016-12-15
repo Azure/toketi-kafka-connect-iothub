@@ -2,14 +2,20 @@
 
 package com.microsoft.azure.iot.kafka.connect.testhelpers
 
-import com.microsoft.azure.iot.kafka.connect.{DataReceiver, IotMessage, IotMessageData, JsonSerialization}
+import java.text.SimpleDateFormat
+import java.time.{Duration, Instant}
+
+import com.microsoft.azure.iot.kafka.connect.{DataReceiver, IotMessage, JsonSerialization}
+import com.microsoft.azure.servicebus.amqp.AmqpConstants
 import org.json4s.jackson.Serialization.write
 
+import scala.collection.mutable
 import scala.util.Random
 
-class MockDataReceiver extends DataReceiver with JsonSerialization {
+class MockDataReceiver(val connectionString: String, val receiverConsumerGroup: String, val partition: String,
+    var offset: Option[String], val startTime: Option[Instant]) extends DataReceiver with JsonSerialization {
 
-  private val random : Random = new Random
+  private val random: Random = new Random
 
   override def receiveData(batchSize: Int): Iterable[IotMessage] = {
     val list = scala.collection.mutable.ListBuffer.empty[IotMessage]
@@ -24,12 +30,19 @@ class MockDataReceiver extends DataReceiver with JsonSerialization {
     val deviceTemp = DeviceTemperature(temp, "F")
     val deviceTempStr = write(deviceTemp)
 
-    val deviceId = "device" + random.nextInt(10)
-    val offset = random.nextString(10)
-    val systemProperties = Map[String, String]("iothub-connection-device-id" -> deviceId, "x-opt-offset" -> offset)
-    val messageProperties = Map[String, String]("model" -> "TestModel")
-    val iotMessageData = IotMessageData(deviceTempStr, systemProperties, messageProperties)
-    val iotMessage = IotMessage(iotMessageData, deviceId, offset)
+    val systemProperties = mutable.Map[String, Object](
+      "iothub-connection-device-id" → s"device$index",
+      AmqpConstants.SEQUENCE_NUMBER_ANNOTATION_NAME → index.toLong.asInstanceOf[Object],
+      AmqpConstants.AMQP_PROPERTY_CORRELATION_ID → random.nextString(10),
+      AmqpConstants.OFFSET_ANNOTATION_NAME → random.nextString(10),
+      AmqpConstants.ENQUEUED_TIME_UTC_ANNOTATION_NAME → new SimpleDateFormat("MM/dd/yyyy").parse("12/01/2016"))
+
+    val messageProperties = mutable.Map[String, String](
+      "timestamp" → Instant.now().toString,
+      "contentType" → "temperature"
+    )
+
+    val iotMessage = IotMessage(deviceTempStr, systemProperties, messageProperties)
     iotMessage
   }
 

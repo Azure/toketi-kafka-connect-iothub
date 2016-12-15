@@ -32,6 +32,8 @@ libraryDependencies ++= {
   )
 }
 
+assemblyJarName in assembly := "kafka-connect-iothub-assembly_2.11-0.5.jar"
+
 publishArtifact in Test := true
 publishArtifact in(Compile, packageDoc) := true
 publishArtifact in(Compile, packageSrc) := true
