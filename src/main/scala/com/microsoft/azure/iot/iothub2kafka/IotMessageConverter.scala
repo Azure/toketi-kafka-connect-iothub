@@ -13,6 +13,19 @@ import scala.reflect.ClassTag
 
 object IotMessageConverter {
 
+  val offsetKey = "offset"
+
+  private val schemaName          = "iothub.kafka.connect"
+  private val schemaVersion       = 1
+  private val deviceIdKey         = "deviceId"
+  private val contentTypeKey      = "contentType"
+  private val sequenceNumberKey   = "sequenceNumber"
+  private val enqueuedTimeKey     = "enqueuedTime"
+  private val contentKey          = "content"
+  private val systemPropertiesKey = "systemProperties"
+  private val propertiesKey       = "properties"
+  private val deviceIdIotHubKey   = "iothub-connection-device-id"
+
   // Public for testing purposes
   lazy val schema: Schema = SchemaBuilder.struct()
     .name(schemaName)
@@ -27,19 +40,6 @@ object IotMessageConverter {
     .field(propertiesKey, propertiesMapSchema)
 
   private lazy val propertiesMapSchema: Schema = SchemaBuilder.map(Schema.STRING_SCHEMA, Schema.STRING_SCHEMA)
-
-  val offsetKey = "offset"
-
-  private val schemaName          = "iothub.kafka.connect"
-  private val schemaVersion       = 1
-  private val deviceIdKey         = "deviceId"
-  private val contentTypeKey      = "contentType"
-  private val sequenceNumberKey   = "sequenceNumber"
-  private val enqueuedTimeKey     = "enqueuedTime"
-  private val contentKey          = "content"
-  private val systemPropertiesKey = "systemProperties"
-  private val propertiesKey       = "properties"
-  private val deviceIdIotHubKey   = "iothub-connection-device-id"
 
   def getIotMessageStruct(iotMessage: IotMessage): Struct = {
 

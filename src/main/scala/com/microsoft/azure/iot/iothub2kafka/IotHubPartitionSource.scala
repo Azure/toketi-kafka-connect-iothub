@@ -2,7 +2,6 @@
 
 package com.microsoft.azure.iot.kafka.connect
 
-import java.util
 import java.util.Collections
 
 import com.typesafe.scalalogging.LazyLogging
@@ -10,7 +9,6 @@ import org.apache.kafka.connect.data.Struct
 import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.source.SourceRecord
 
-import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
 import scala.util.control.NonFatal
 
@@ -21,7 +19,7 @@ class IotHubPartitionSource(val dataReceiver: DataReceiver,
   extends LazyLogging
     with JsonSerialization {
 
-  def getRecords: util.List[SourceRecord] = {
+  def getRecords: List[SourceRecord] = {
 
     logger.debug(s"Polling for data from Partition $partition")
     val list = ListBuffer.empty[SourceRecord]
@@ -43,7 +41,7 @@ class IotHubPartitionSource(val dataReceiver: DataReceiver,
             kafkaMessage.getString(IotMessageConverter.offsetKey))
           val sourceRecord = new SourceRecord(sourcePartitionKey, sourceOffset, this.topic, kafkaMessage.schema(),
             kafkaMessage)
-          list.add(sourceRecord)
+          list += sourceRecord
         }
       }
     } catch {
@@ -54,6 +52,6 @@ class IotHubPartitionSource(val dataReceiver: DataReceiver,
         throw new ConnectException(errorMsg, e)
     }
     logger.debug(s"Obtained ${list.length} SourceRecords from IotHub")
-    list
+    list.toList
   }
 }

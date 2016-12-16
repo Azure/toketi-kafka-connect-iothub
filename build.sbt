@@ -1,8 +1,10 @@
 // Copyright (c) Microsoft. All rights reserved.
 
+val iotHubKafkaConnectVersion = "0.5"
+
 name := "kafka-connect-iothub"
 organization := "com.microsoft.azure.iot"
-version := "0.5"
+version := iotHubKafkaConnectVersion
 
 scalaVersion := "2.11.8"
 
@@ -32,7 +34,7 @@ libraryDependencies ++= {
   )
 }
 
-assemblyJarName in assembly := "kafka-connect-iothub-assembly_2.11-0.5.jar"
+assemblyJarName in assembly := s"kafka-connect-iothub-assembly_2.11-$iotHubKafkaConnectVersion.jar"
 
 publishArtifact in Test := true
 publishArtifact in(Compile, packageDoc) := true

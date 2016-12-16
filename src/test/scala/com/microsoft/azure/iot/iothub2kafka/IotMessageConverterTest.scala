@@ -18,8 +18,8 @@ class IotMessageConverterTest extends FlatSpec with GivenWhenThen with JsonSeria
 
   private val random: Random = new Random
 
-  "IotMessage Converter"
-  it should "" in {
+  "IotMessage Converter" should "populate right values for kafka message struct fields" in {
+
     Given("IotMessage object")
     val deviceTemp = DeviceTemperature(100.01, "F")
     val deviceTempStr = write(deviceTemp)
@@ -66,6 +66,7 @@ class IotMessageConverterTest extends FlatSpec with GivenWhenThen with JsonSeria
   }
 
   it should "use default values for missing properties" in {
+
     val deviceTemp = DeviceTemperature(100.01, "F")
     val deviceTempStr = write(deviceTemp)
 

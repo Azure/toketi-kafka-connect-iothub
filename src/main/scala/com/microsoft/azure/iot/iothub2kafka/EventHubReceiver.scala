@@ -6,7 +6,7 @@ import java.time.Instant
 
 import com.microsoft.azure.eventhubs.{EventHubClient, PartitionReceiver}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 
 class EventHubReceiver(val connectionString: String, val receiverConsumerGroup: String, val partition: String,
@@ -38,11 +38,11 @@ class EventHubReceiver(val connectionString: String, val receiverConsumerGroup: 
     var curBatchSize = batchSize
     var endReached = false
     while (curBatchSize > 0 && !endReached) {
-      val batch = this.eventHubReceiver.receiveSync(curBatchSize)
+      val batch = this.eventHubReceiver.receiveSync(curBatchSize).asScala
       if (batch != null && batch.nonEmpty) {
         iotMessages ++= batch.map(e => {
           val content = new String(e.getBody)
-          val iotDeviceData = IotMessage(content, e.getSystemProperties, e.getProperties)
+          val iotDeviceData = IotMessage(content, e.getSystemProperties.asScala, e.getProperties.asScala)
           iotDeviceData
         })
         curBatchSize -= batch.size

@@ -14,7 +14,6 @@ import org.apache.kafka.connect.source.SourceConnector
 import org.json4s.jackson.Serialization.write
 
 import scala.collection.JavaConverters._
-import collection.JavaConversions._
 import scala.collection.mutable
 
 class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSerialization {
@@ -74,7 +73,7 @@ class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSe
     var iotHubSourceConfigOption: Option[IotHubSourceConfig] = None
 
     try {
-      iotHubSourceConfigOption = Some(IotHubSourceConfig.getConfig(props.toMap))
+      iotHubSourceConfigOption = Some(IotHubSourceConfig.getConfig(props))
     } catch {
       case ex: ConfigException ⇒ throw new ConnectException("Could not start IotHubSourceConnector due to a " +
         "configuration exception", ex)

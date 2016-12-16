@@ -11,7 +11,7 @@ import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.source.{SourceRecord, SourceTask}
 import org.json4s.jackson.Serialization.read
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.util.control.NonFatal
 
@@ -37,7 +37,7 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
         throw new ConnectException("Error while polling for data", e)
     }
     logger.info(s"Polling for data - Obtained ${list.length} SourceRecords from IotHub")
-    list
+    list.asJava
   }
 
   override def start(props: util.Map[String, String]): Unit = {
