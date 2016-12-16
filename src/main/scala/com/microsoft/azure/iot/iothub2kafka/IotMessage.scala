@@ -2,6 +2,5 @@
 
 package com.microsoft.azure.iot.kafka.connect
 
-case class IotMessage(data: IotMessageData, deviceId: String, offset: String)
-
-case class IotMessageData(content: String, systemProperties: Map[String, String], properties: Map[String, String])
+case class IotMessage(content: String, systemProperties: scala.collection.mutable.Map[String, Object],
+    properties: scala.collection.mutable.Map[String, String])

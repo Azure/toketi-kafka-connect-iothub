@@ -98,14 +98,74 @@ on this topic.
 
 ### Data format
 
-The data in the IoT Hub is retrieved and pumped into the specified Kafka topic as a JSON blob string, with the following
- format. This allows data with any schema to be copied over to Kafka for consumption downstream.
+The data in the IoT Hub is retrieved and pumped into the specified Kafka topic with the following schema. Note that it contains the most relevant properties at the top level (like deviceId, offset, enqueuedTime, sequenceNumber, etc.). While all these properties are set by IoT Hub, contentType needs to be set by the device. The actual payload from the device is contained in the "content" property as a JSON blob. This allows payload with any schema to be copied over to Kafka for consumption downstream. 
 
 ```json
 {
-  "content":"The raw content sent by the device",
-  "systemProperties":"Map of key-value pairs containing system properties",
-  "properties":"Map of key-value pairs containing any custom properties set by the device"
+  "schema": {
+    "type": "struct",
+    "fields": [
+      {
+        "type": "string",
+        "optional": false,
+        "field": "deviceId"
+      },
+      {
+        "type": "string",
+        "optional": false,
+        "field": "offset"
+      },
+      {
+        "type": "string",
+        "optional": true,
+        "field": "contentType"
+      },
+      {
+        "type": "string",
+        "optional": false,
+        "field": "enqueuedTime"
+      },
+      {
+        "type": "int64",
+        "optional": false,
+        "field": "sequenceNumber"
+      },
+      {
+        "type": "string",
+        "optional": false,
+        "field": "content"
+      },
+      {
+        "type": "map",
+        "keys": {
+          "type": "string",
+          "optional": false
+        },
+        "values": {
+          "type": "string",
+          "optional": false
+        },
+        "optional": false,
+        "field": "systemProperties"
+      },
+      {
+        "type": "map",
+        "keys": {
+          "type": "string",
+          "optional": false
+        },
+        "values": {
+          "type": "string",
+          "optional": false
+        },
+        "optional": false,
+        "field": "properties"
+      }
+    ],
+    "optional": false,
+    "name": "iothub.kafka.connect",
+    "version": 1
+  }
 }
 ```
 

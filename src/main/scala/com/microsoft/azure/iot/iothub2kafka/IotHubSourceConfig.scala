@@ -6,7 +6,7 @@ import com.microsoft.azure.eventhubs.EventHubClient
 import org.apache.kafka.common.config.ConfigDef.{Importance, Type, Width}
 import org.apache.kafka.common.config.{AbstractConfig, ConfigDef}
 
-import scala.collection.JavaConversions._
+import java.util.Map
 
 object IotHubSourceConfig {
 

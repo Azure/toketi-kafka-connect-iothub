@@ -2,15 +2,13 @@
 
 package com.microsoft.azure.iot.kafka.connect
 
-import java.util
 import java.util.Collections
 
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.kafka.connect.data.Schema
+import org.apache.kafka.connect.data.Struct
+import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.source.SourceRecord
-import org.json4s.jackson.Serialization.write
 
-import scala.collection.JavaConversions._
 import scala.collection.mutable.ListBuffer
 import scala.util.control.NonFatal
 
@@ -21,7 +19,7 @@ class IotHubPartitionSource(val dataReceiver: DataReceiver,
   extends LazyLogging
     with JsonSerialization {
 
-  def getRecords: util.List[SourceRecord] = {
+  def getRecords: List[SourceRecord] = {
 
     logger.debug(s"Polling for data from Partition $partition")
     val list = ListBuffer.empty[SourceRecord]
@@ -38,13 +36,12 @@ class IotHubPartitionSource(val dataReceiver: DataReceiver,
 
         for (msg: IotMessage <- messages) {
 
-          val kafkaMessage = write(msg.data)
-          val sourceOffset = Collections.singletonMap("EventHubOffset", msg.offset)
-          // Using DeviceId as the Key for the Kafka Message.
-          // This can be made configurable in the future
-          val sourceRecord = new SourceRecord(sourcePartitionKey, sourceOffset, this.topic,
-            Schema.STRING_SCHEMA, msg.deviceId, Schema.STRING_SCHEMA, kafkaMessage)
-          list.add(sourceRecord)
+          val kafkaMessage: Struct = IotMessageConverter.getIotMessageStruct(msg)
+          val sourceOffset = Collections.singletonMap("EventHubOffset",
+            kafkaMessage.getString(IotMessageConverter.offsetKey))
+          val sourceRecord = new SourceRecord(sourcePartitionKey, sourceOffset, this.topic, kafkaMessage.schema(),
+            kafkaMessage)
+          list += sourceRecord
         }
       }
     } catch {
@@ -52,9 +49,9 @@ class IotHubPartitionSource(val dataReceiver: DataReceiver,
         val errorMsg = s"Error while getting SourceRecords for partition ${this.partition}. " +
           s"Exception - ${e.toString} Stack trace - ${e.printStackTrace()}"
         logger.error(errorMsg)
-        throw e
+        throw new ConnectException(errorMsg, e)
     }
     logger.debug(s"Obtained ${list.length} SourceRecords from IotHub")
-    list
+    list.toList
   }
 }
