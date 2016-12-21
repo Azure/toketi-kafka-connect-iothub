@@ -38,14 +38,15 @@ class EventHubReceiver(val connectionString: String, val receiverConsumerGroup: 
     var curBatchSize = batchSize
     var endReached = false
     while (curBatchSize > 0 && !endReached) {
-      val batch = this.eventHubReceiver.receiveSync(curBatchSize).asScala
-      if (batch != null && batch.nonEmpty) {
-        iotMessages ++= batch.map(e => {
+      val batch = this.eventHubReceiver.receiveSync(curBatchSize)
+      if (batch != null) {
+        val batchIterable = batch.asScala
+        iotMessages ++= batchIterable.map(e => {
           val content = new String(e.getBody)
           val iotDeviceData = IotMessage(content, e.getSystemProperties.asScala, e.getProperties.asScala)
           iotDeviceData
         })
-        curBatchSize -= batch.size
+        curBatchSize -= batchIterable.size
       } else {
         endReached = true
       }

@@ -16,12 +16,12 @@ All the configuration settings required to run Kafka Connector for IoT Hub are i
 |-------------|-------------|-------------|-------------|----------------|
 | Kafka.Topic | String | Yes |  | This is the topic to which the data will be written to. If the topic exists in Kafka, it will be used, else it will be created. To configure the topic properly (partitions, retention policy, etc.) please use the appropriate [Kafka tools](https://kafka.apache.org/documentation#quickstart_createtopic). |
 | tasks.max | Int | Yes |  | Maximum number of tasks that should be created for this connector. More tasks means more parallelism. For optimal performance, this should equal the number of IoTHub partitions. |
-| IotHub.EventHubCompatibleName | String | Yes |  | The EventHub compatible name for the IoT Hub. In the Azure Portal, you can find the value under to "IoT Hub" >> your hub >> "Messaging" >> "Event Hub-compatible name" |
-| IotHub.EventHubCompatibleNamespace | String | Yes |  | The EventHub ccompatible namespace for the IoT Hub. In the Azure Portal, you can find the value under "IoT Hub" >> your hub > "Messaging" >> "Event Hub-compatible endpoint". Use only the name part. For example, for "sb://iothub-ns-toketi-1234-9876.servicebus.windows.net/", use "iothub-ns-toketi-1234-9876" |
+| IotHub.EventHubCompatibleName | String | Yes |  | The EventHub compatible name for the IoT Hub. In the Azure Portal, you can find the value under to "IoT Hub" >> your hub >> "Operations monitoring" >> "Event Hub-compatible name" |
+| IotHub.EventHubCompatibleNamespace | String | Yes |  | The EventHub ccompatible namespace for the IoT Hub. In the Azure Portal, you can find the value under "IoT Hub" >> your hub > "Operations monitoring" >> "Event Hub-compatible endpoint". Use only the name part. For example, for "sb://iothub-ns-toketi-1234-9876.servicebus.windows.net/", use "iothub-ns-toketi-1234-9876" |
 | IotHub.AccessKeyName | String | Yes |  | The access key name for the IoT Hub. In the Azure Portal, you can find the value under "IoT Hub" >> your hub >> "Shared access policies". You can use the predefined value "service". |
 | IotHub.AccessKeyValue | String | Yes |  | The access key for the IoT Hub. In the Azure Portal, you can find the value under "IoT Hub" >> your hub >> "Shared access policies" >> key name >> "Primary key" |
-| IotHub.ConsumerGroup | String | Yes |  | The access key for the IoT Hub. In the Azure Portal, you can find the value under "IoT Hub" >> your hub > "Messaging" >> Consumer groups. You can use the $Default group or create a new one (recommended) |
-| IotHub.Partitions | String | Yes |  | The access key for the IoT Hub. In the Azure Portal, navigate to "IoT Hub" >> your hub >> "Messaging" >> "Partitions". |
+| IotHub.ConsumerGroup | String | Yes |  | The access key for the IoT Hub. In the Azure Portal, you can find the value under "IoT Hub" >> your hub > "Operations monitoring" >> Consumer groups. You can use the $Default group or create a new one (recommended) |
+| IotHub.Partitions | String | Yes |  | The access key for the IoT Hub. In the Azure Portal, navigate to "IoT Hub" >> your hub >> "Operations monitoring" >> "Partitions". |
 | IotHub.StartTime | String | No | (Unused if not supplied) | The time from which to start retrieving messages from IoT Hub. The value should be in UTC and in the format yyyy-mm-ddThh:mm:ssZ. This setting is mutually exclusive with IotHub.Offsets. |
 | IotHub.Offsets | String | No | (Unused if not supplied) | The offsets for each IoT Hub partition from which to start retrieving messages from IoTHub, as a comma separated string. For example, for 4 partitions, the value would be something like "abc,lmn,pqr,xyz". This setting is mutually exclusive with IotHub.StartTime. |
 | BatchSize | Int | No | 100 | The size of each batch for retrieving entries from IoT Hub. |
@@ -98,7 +98,7 @@ on this topic.
 
 ### Data format
 
-The data in the IoT Hub is retrieved and pumped into the specified Kafka topic with the following schema. Note that it contains the most relevant properties at the top level (like deviceId, offset, enqueuedTime, sequenceNumber, etc.). While all these properties are set by IoT Hub, contentType needs to be set by the device. The actual payload from the device is contained in the "content" property as a JSON blob. This allows payload with any schema to be copied over to Kafka for consumption downstream. 
+The data in the IoT Hub is retrieved and pumped into the specified Kafka topic with the following schema. Note that it contains the most relevant properties at the top level (like deviceId, offset, enqueuedTime, sequenceNumber, etc.). While all these properties are set by IoT Hub, contentType needs to be set by the device. The actual payload from the device is contained in the "content" property as a JSON blob. This allows payload with any schema to be copied over to Kafka for consumption downstream.
 
 ```json
 {
