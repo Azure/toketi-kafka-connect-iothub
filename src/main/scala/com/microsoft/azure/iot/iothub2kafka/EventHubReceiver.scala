@@ -29,31 +29,37 @@ class EventHubReceiver(val connectionString: String, val receiverConsumerGroup: 
   }
 
   override def close(): Unit = {
-    this.isClosing = true
     if (this.eventHubReceiver != null) {
-      this.eventHubReceiver.close()
+      this.eventHubReceiver.synchronized {
+        this.isClosing = true
+        this.eventHubReceiver.close()
+      }
     }
   }
 
   override def receiveData(batchSize: Int): Iterable[IotMessage] = {
     var iotMessages = ListBuffer.empty[IotMessage]
-    if (!this.isClosing) {
       var curBatchSize = batchSize
       var endReached = false
-      while (curBatchSize > 0 && !endReached) {
-        val batch = this.eventHubReceiver.receiveSync(curBatchSize)
-        if (batch != null) {
-          val batchIterable = batch.asScala
-          iotMessages ++= batchIterable.map(e => {
-            val content = new String(e.getBody)
-            val iotDeviceData = IotMessage(content, e.getSystemProperties.asScala, e.getProperties.asScala)
-            iotDeviceData
-          })
-          curBatchSize -= batchIterable.size
-        } else {
-          endReached = true
+      // Synchronize on the eventHubReceiver object, and make sure the task is not closing,
+      // in which case, the eventHubReceiver might be closed.
+      while (curBatchSize > 0 && !endReached && !this.isClosing) {
+        this.eventHubReceiver.synchronized {
+          if(!this.isClosing) {
+            val batch = this.eventHubReceiver.receiveSync(curBatchSize)
+            if (batch != null) {
+              val batchIterable = batch.asScala
+              iotMessages ++= batchIterable.map(e => {
+                val content = new String(e.getBody)
+                val iotDeviceData = IotMessage(content, e.getSystemProperties.asScala, e.getProperties.asScala)
+                iotDeviceData
+              })
+              curBatchSize -= batchIterable.size
+            } else {
+              endReached = true
+            }
+          }
         }
-      }
     }
     iotMessages
   }
