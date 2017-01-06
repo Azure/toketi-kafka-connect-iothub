@@ -2,7 +2,7 @@
 
 package com.microsoft.azure.iot.kafka.connect
 
-import java.util.Collections
+import java.util.{Collections, Map}
 
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.connect.data.Struct
@@ -15,7 +15,8 @@ import scala.util.control.NonFatal
 class IotHubPartitionSource(val dataReceiver: DataReceiver,
     val partition: String,
     val topic: String,
-    val batchSize: Int)
+    val batchSize: Int,
+    val sourcePartition: Map[String, String])
   extends LazyLogging
     with JsonSerialization {
 
@@ -32,14 +33,12 @@ class IotHubPartitionSource(val dataReceiver: DataReceiver,
         logger.debug(s"Received ${messages.size} messages from partition ${this.partition} " +
           s"(requested $batchSize batch)")
 
-        val sourcePartitionKey = Collections.singletonMap("EventHubPartitionKey", this.partition)
-
         for (msg: IotMessage <- messages) {
 
           val kafkaMessage: Struct = IotMessageConverter.getIotMessageStruct(msg)
           val sourceOffset = Collections.singletonMap("EventHubOffset",
             kafkaMessage.getString(IotMessageConverter.offsetKey))
-          val sourceRecord = new SourceRecord(sourcePartitionKey, sourceOffset, this.topic, kafkaMessage.schema(),
+          val sourceRecord = new SourceRecord(sourcePartition, sourceOffset, this.topic, kafkaMessage.schema(),
             kafkaMessage)
           list += sourceRecord
         }
