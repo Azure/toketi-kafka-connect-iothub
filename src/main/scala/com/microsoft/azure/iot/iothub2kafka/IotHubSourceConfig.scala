@@ -17,10 +17,11 @@ object IotHubSourceConfig {
   val EventHubCompatibleConnectionString = "IotHub.EventHubCompatibleConnectionString"
   val EventHubCompatibleName             = "IotHub.EventHubCompatibleName"
   val EventHubCompatibleNameDoc          =
-    """EventHub compatible name ("IoT Hub" >> your hub >> "Messaging" >> "Event Hub-compatible name")"""
-  val EventHubCompatibleNamespace        = "IotHub.EventHubCompatibleNamespace"
-  val EventHubCompatibleNamespaceDoc     =
-    """EventHub compatible namespace ("IoT Hub" >> your hub > "Messaging" >> "Event Hub-compatible endpoint")"""
+    """EventHub compatible name ("IoT Hub" >> your hub >> "Endpoints" >> "Events" >> "Event Hub-compatible name")"""
+  val EventHubCompatibleEndpoint        = "IotHub.EventHubCompatibleEndpoint"
+  val EventHubCompatibleEndpointDoc     =
+    """EventHub compatible endpoint ("IoT Hub" >> your hub >> "Endpoints" >> "Events" >> "Event Hub-compatible """ +
+      """endpoint")"""
   val IotHubAccessKeyName                = "IotHub.AccessKeyName"
   val IotHubAccessKeyNameDoc             =
     """IotHub access key name ("IoT Hub" >> your hub >> "Shared access policies", default is service)"""
@@ -46,8 +47,8 @@ object IotHubSourceConfig {
   lazy val configDef = new ConfigDef()
     .define(EventHubCompatibleName, Type.STRING, Importance.HIGH, EventHubCompatibleNameDoc, iotConfigGroup, 1, Width
       .MEDIUM, "Event Hub compatible name")
-    .define(EventHubCompatibleNamespace, Type.STRING, Importance.HIGH, EventHubCompatibleNamespaceDoc,
-      iotConfigGroup, 2, Width.MEDIUM, "Event Hub compatible namespace")
+    .define(EventHubCompatibleEndpoint, Type.STRING, Importance.HIGH, EventHubCompatibleEndpointDoc,
+      iotConfigGroup, 2, Width.MEDIUM, "Event Hub compatible endpoint")
     .define(IotHubAccessKeyName, Type.STRING, Importance.HIGH, IotHubAccessKeyNameDoc, iotConfigGroup, 3, Width.SHORT,
       "Access key name")
     .define(IotHubAccessKeyValue, Type.STRING, Importance.HIGH, IotHubAccessKeyValueDoc, iotConfigGroup, 4,
@@ -66,6 +67,10 @@ object IotHubSourceConfig {
 
   def getConfig(configValues: Map[String, String]): IotHubSourceConfig = {
     new IotHubSourceConfig(configDef, configValues)
+  }
+
+  def getEventHubCompatibleNamespace(eventHubCompatibleEndpoint: String): String = {
+    eventHubCompatibleEndpoint.replaceFirst(".*://", "").replaceFirst("\\..*", "")
   }
 }
 

@@ -80,8 +80,10 @@ class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSe
     }
 
     val iotHubSourceConfig = iotHubSourceConfigOption.get
+    val eventHubCompatibleNamespace = IotHubSourceConfig.getEventHubCompatibleNamespace(
+      iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleEndpoint))
     val iotHubConnectionString = new ConnectionStringBuilder(
-      iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleNamespace),
+      eventHubCompatibleNamespace,
       iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleName),
       iotHubSourceConfig.getString(IotHubSourceConfig.IotHubAccessKeyName),
       iotHubSourceConfig.getString(IotHubSourceConfig.IotHubAccessKeyValue)).toString
