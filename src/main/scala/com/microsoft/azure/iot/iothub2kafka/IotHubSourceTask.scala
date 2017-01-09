@@ -75,10 +75,10 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
         logger.info(s"Setting up partition receiver $partition with previously saved offset ${partitionOffset.get}")
       } else if (startTime.isDefined) {
         partitionStartTime = startTime
-        logger.info(s"Setting up partition receiver $partition with start time ${startTime.toString}")
+        logger.info(s"Setting up partition receiver $partition with start time ${startTime}")
       } else {
         partitionOffset = Some(initialOffset)
-        logger.info(s"Setting up partition receiver $partition with offset ${partitionOffset.get.toString}")
+        logger.info(s"Setting up partition receiver $partition with offset ${partitionOffset.get}")
       }
 
       val dataReceiver = getDataReceiver(connectionString, receiverConsumerGroup, partition,
@@ -107,7 +107,7 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
     None
   }
 
-  def getSavedOffset(offsetStorageReader: OffsetStorageReader, sourcePartition: util.Map[String, String]):
+  private def getSavedOffset(offsetStorageReader: OffsetStorageReader, sourcePartition: util.Map[String, String]):
   Option[String] = {
 
     if (offsetStorageReader != null) {

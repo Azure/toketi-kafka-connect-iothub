@@ -3,6 +3,7 @@
 package com.microsoft.azure.iot.kafka.connect
 
 import java.time.Instant
+import java.util.concurrent.CompletableFuture
 
 import com.microsoft.azure.eventhubs.{EventHubClient, PartitionReceiver}
 
@@ -32,7 +33,7 @@ class EventHubReceiver(val connectionString: String, val receiverConsumerGroup: 
     if (this.eventHubReceiver != null) {
       this.eventHubReceiver.synchronized {
         this.isClosing = true
-        this.eventHubReceiver.close()
+        (eventHubReceiver.close()).join()
       }
     }
   }

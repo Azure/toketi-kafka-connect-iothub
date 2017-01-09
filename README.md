@@ -43,7 +43,7 @@ Kafka.Topic=IotTopic
 IotHub.EventHubCompatibleName=iothub-toketi
 IotHub.EventHubCompatibleEndpoint=sb://iothub-ns-toketi-001.servicebus.windows.net/
 IotHub.AccessKeyName=service
-IotHub.AccessKeyValue=skdfljiqondfldnm
+IotHub.AccessKeyValue=6XdRSFB9H61f+N3uOdBJiKwzeqbZUj1K//T2jFyewN4=
 IotHub.ConsumerGroup=$Default
 IotHub.Partitions=4
 IotHub.StartTime=2016-11-28T00:00:00Z
