@@ -3,7 +3,6 @@
 package com.microsoft.azure.iot.kafka.connect
 
 import java.time.Instant
-import java.util.concurrent.CompletableFuture
 
 import com.microsoft.azure.eventhubs.{EventHubClient, PartitionReceiver}
 
