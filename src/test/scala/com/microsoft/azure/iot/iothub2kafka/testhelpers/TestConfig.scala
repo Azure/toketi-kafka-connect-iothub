@@ -44,7 +44,7 @@ object TestConfig {
   lazy val sourceConnectorTestProps: util.Map[String, String] = {
     val props = new util.HashMap[String, String]()
     props.put(IotHubSourceConfig.EventHubCompatibleName, iotHubName)
-    props.put(IotHubSourceConfig.EventHubCompatibleNamespace, iotHubNamespace)
+    props.put(IotHubSourceConfig.EventHubCompatibleEndpoint, iotHubEndpoint)
     props.put(IotHubSourceConfig.IotHubAccessKeyName, iotHubKeyName)
     props.put(IotHubSourceConfig.IotHubAccessKeyValue, iotHubKeyValue)
     props.put(IotHubSourceConfig.IotHubPartitions, iotHubPartitions.toString)
@@ -56,7 +56,7 @@ object TestConfig {
   lazy val sourceConnectorTestPropsStartTime: util.Map[String, String] = {
     val props = new util.HashMap[String, String]()
     props.put(IotHubSourceConfig.EventHubCompatibleName, iotHubName)
-    props.put(IotHubSourceConfig.EventHubCompatibleNamespace, iotHubNamespace)
+    props.put(IotHubSourceConfig.EventHubCompatibleEndpoint, iotHubEndpoint)
     props.put(IotHubSourceConfig.IotHubAccessKeyName, iotHubKeyName)
     props.put(IotHubSourceConfig.IotHubAccessKeyValue, iotHubKeyValue)
     props.put(IotHubSourceConfig.IotHubPartitions, iotHubPartitions.toString)
@@ -68,7 +68,7 @@ object TestConfig {
   lazy val invalidSourceConnectorTestProps: util.Map[String, String] = {
     val props = new util.HashMap[String, String]()
     props.put(IotHubSourceConfig.EventHubCompatibleName, iotHubName)
-    props.put(IotHubSourceConfig.EventHubCompatibleNamespace, iotHubNamespace)
+    props.put(IotHubSourceConfig.EventHubCompatibleEndpoint, iotHubEndpoint)
     props.put(IotHubSourceConfig.IotHubAccessKeyName, iotHubKeyName)
     props.put(IotHubSourceConfig.IotHubAccessKeyValue, iotHubKeyValue)
     props
@@ -77,9 +77,9 @@ object TestConfig {
   lazy private val config           = ConfigFactory.load()
   lazy private val iotHubConfig     = config.getConfig("iothub")
   lazy private val iotHubName       = iotHubConfig.getString("name")
-  lazy private val iotHubNamespace  = iotHubConfig.getString("namespace")
+  lazy private val iotHubEndpoint  = iotHubConfig.getString("endpoint")
   lazy private val iotHubKeyName    = iotHubConfig.getString("keyName")
   lazy private val iotHubKeyValue   = iotHubConfig.getString("key")
   lazy private val iotHubPartitions = iotHubConfig.getInt("partitions")
-  lazy private val connStr          = new ConnectionStringBuilder(iotHubNamespace, iotHubName, iotHubKeyName, iotHubKeyValue)
+  lazy private val connStr          = new ConnectionStringBuilder(iotHubEndpoint, iotHubName, iotHubKeyName, iotHubKeyValue)
 }

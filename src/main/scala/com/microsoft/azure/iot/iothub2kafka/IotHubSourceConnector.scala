@@ -80,8 +80,10 @@ class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSe
     }
 
     val iotHubSourceConfig = iotHubSourceConfigOption.get
+    val eventHubCompatibleNamespace = IotHubSourceConfig.getEventHubCompatibleNamespace(
+      iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleEndpoint))
     val iotHubConnectionString = new ConnectionStringBuilder(
-      iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleNamespace),
+      eventHubCompatibleNamespace,
       iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleName),
       iotHubSourceConfig.getString(IotHubSourceConfig.IotHubAccessKeyName),
       iotHubSourceConfig.getString(IotHubSourceConfig.IotHubAccessKeyValue)).toString
@@ -93,7 +95,8 @@ class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSe
       IotHubSourceConfig.KafkaTopic -> iotHubSourceConfig.getString(IotHubSourceConfig.KafkaTopic),
       IotHubSourceConfig.IotHubConsumerGroup -> iotHubSourceConfig.getString(IotHubSourceConfig.IotHubConsumerGroup),
       IotHubSourceConfig.IotHubPartitions -> iotHubSourceConfig.getInt(IotHubSourceConfig.IotHubPartitions).toString,
-      IotHubSourceConfig.IotHubStartTime -> iotHubSourceConfig.getString(IotHubSourceConfig.IotHubStartTime)
+      IotHubSourceConfig.IotHubStartTime -> iotHubSourceConfig.getString(IotHubSourceConfig.IotHubStartTime),
+      IotHubSourceConfig.EventHubCompatibleName → iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleName)
     )
   }
 

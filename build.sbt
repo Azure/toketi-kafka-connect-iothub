@@ -23,10 +23,10 @@ libraryDependencies ++= {
   Seq(
     "org.apache.kafka" % "connect-api" % kafkaVersion % "provided",
     "org.apache.kafka" % "connect-json" % kafkaVersion % "provided",
+    "ch.qos.logback" % "logback-classic" % logbackClassicVersion % "provided",
     "com.microsoft.azure" % "azure-eventhubs" % azureEventHubSDKVersion,
     "org.json4s" %% "json4s-jackson" % json4sVersion,
     "com.typesafe.scala-logging" %% "scala-logging" % scalaLoggingVersion,
-    "ch.qos.logback" % "logback-classic" % logbackClassicVersion,
 
     // Test dependencies
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test",

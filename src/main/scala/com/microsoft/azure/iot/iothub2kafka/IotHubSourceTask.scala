@@ -4,11 +4,11 @@ package com.microsoft.azure.iot.kafka.connect
 
 import java.time.Instant
 import java.util
-import java.util.Collections
 
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.source.{SourceRecord, SourceTask}
+import org.apache.kafka.connect.storage.OffsetStorageReader
 import org.json4s.jackson.Serialization.read
 
 import scala.collection.JavaConverters._
@@ -55,26 +55,35 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
     val topic = props.get(IotHubSourceConfig.KafkaTopic)
     val batchSize = props.get(IotHubSourceConfig.BatchSize).toInt
     val startTime = getStartTime(props.get(IotHubSourceConfig.IotHubStartTime))
+    val eventHubName = props.get(IotHubSourceConfig.EventHubCompatibleName)
 
-    val previousOffsets = getSavedOffsets(partitionOffsetsMap.keys)
+    val offsetStorageReader: OffsetStorageReader = if (this.context != null) {
+      this.context.offsetStorageReader()
+    } else {
+      null
+    }
+
     for ((partition, initialOffset) <- partitionOffsetsMap) {
 
+      val sourcePartition = Map(
+        "EventHubName" → eventHubName,
+        "EventHubPartition" → partition).asJava
+
       var partitionStartTime: Option[Instant] = None
-      var partitionOffset: Option[String] = None
-      if (previousOffsets.contains(partition) && previousOffsets(partition).trim.length > 0) {
-        partitionOffset = Some(previousOffsets(partition))
-        logger.debug(s"Setting up partition $partition with previously saved offset ${partitionOffset.get.toString}")
+      var partitionOffset: Option[String] = getSavedOffset(offsetStorageReader, sourcePartition)
+      if (partitionOffset.isDefined) {
+        logger.info(s"Setting up partition receiver $partition with previously saved offset ${partitionOffset.get}")
       } else if (startTime.isDefined) {
         partitionStartTime = startTime
-        logger.debug(s"Setting up partition $partition with start time ${startTime.toString}")
+        logger.info(s"Setting up partition receiver $partition with start time ${startTime}")
       } else {
         partitionOffset = Some(initialOffset)
-        logger.debug(s"Setting up partition $partition with offset ${partitionOffset.get.toString}")
+        logger.info(s"Setting up partition receiver $partition with offset ${partitionOffset.get}")
       }
 
       val dataReceiver = getDataReceiver(connectionString, receiverConsumerGroup, partition,
         partitionOffset, partitionStartTime)
-      val partitionSource = new IotHubPartitionSource(dataReceiver, partition, topic, batchSize)
+      val partitionSource = new IotHubPartitionSource(dataReceiver, partition, topic, batchSize, sourcePartition)
       this.partitionSources += partitionSource
     }
   }
@@ -98,36 +107,22 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
     None
   }
 
-  private def getSavedOffsets(partitions: Iterable[String]): mutable.Map[String, String] = {
+  private def getSavedOffset(offsetStorageReader: OffsetStorageReader, sourcePartition: util.Map[String, String]):
+  Option[String] = {
 
-    val partitionOffsetMap = mutable.Map.empty[String, String]
-    this.logger.debug("Getting offsets from previous values, if available")
-    if (this.context != null) {
-
-      val storageReader = this.context.offsetStorageReader()
-      if (storageReader != null && partitions != null) {
-
-        for (partition <- partitions) {
-
-          logger.debug(s"Getting saved offset for partition $partition")
-          val partitionKey = Collections.singletonMap("EventHubPartitionKey", partition)
-          val offsetMap = storageReader.offset(partitionKey)
-          if (offsetMap != null) {
-
-            if (offsetMap.containsKey("EventHubOffset")) {
-
-              offsetMap.get("EventHubOffset") match {
-                case storedOffset: String if storedOffset != null && storedOffset.trim.length > 0 =>
-                  partitionOffsetMap(partition) = storedOffset.trim
-                  this.logger.info(s"Setting offset from previous snapshot for partition $partition " +
-                    s"to value - $storedOffset")
-              }
-            }
-          }
+    if (offsetStorageReader != null) {
+      logger.debug(s"Attempting to get saved offset for SourcePartition: ${sourcePartition.toString}")
+      val offsetMap = offsetStorageReader.offset(sourcePartition)
+      if (offsetMap != null && offsetMap.containsKey("EventHubOffset")) {
+        offsetMap.get("EventHubOffset") match {
+          case storedOffset: String if storedOffset != null && storedOffset.trim.length > 0 =>
+            return Some(storedOffset.trim)
         }
       }
+    } else {
+      logger.debug(s"Cannot get saved offset as OffsetStorageReader is null")
     }
-    partitionOffsetMap
+    None
   }
 
   override def stop(): Unit = {
