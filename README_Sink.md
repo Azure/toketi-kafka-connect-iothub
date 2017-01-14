@@ -80,6 +80,16 @@ will throw an exception.
 }
 ```
 
+Here are the details of each field above -
+
+| Field | Info |
+|-------|------|
+| deviceId | The ID of the device to which you want to send the message |
+| message | The actual message to be sent to the device |
+| messageId | The ID of the message that is sent. This ID can be matched with the ID on the feedback channel to get the status of the message sent. |
+| expiry | The time before which the message should be sent. If not, the message is considered expired and discarded by IoT Hub. This value should be in UTC and in the format YYYY-MM-DDThh:mm:ssZ |
+
+
 ### Building and running
 
 #### Pre-requisites
@@ -88,7 +98,7 @@ will throw an exception.
 [here](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-java-java-getstarted).
 
 * You also need to have Apache Kafka v0.10 installation running, that contains messages to be sent to the IoT devices in
- one or more topics. Get started with Kafka [here](https://kafka.apache.org/documentation#quickstart).
+ one or more topics. Get started with Kafka [here](http://docs.confluent.io/3.0.0/quickstart.html).
 
 * To insert the messages for the IoT devices in the Kafka topic, you can use a KafkaProducer. You can read more on
 how to use the KafkaProducer [here](http://docs.confluent.io/3.0.0/clients/producer.html). Here is a sample code to
@@ -166,4 +176,4 @@ on this topic.
 
 ## Future work
 
-* Add support to get feedback on the messages sent to the Azure IoT Devices. 
+* Add support to get feedback on the messages sent to the Azure IoT Devices.
