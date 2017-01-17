@@ -89,6 +89,8 @@ Here are the details of each field above -
 | messageId | The ID of the message that is sent. This ID can be matched with the ID on the feedback channel to get the status of the message sent. |
 | expiry | The time before which the message should be sent. If not, the message is considered expired and discarded by IoT Hub. This value should be in UTC and in the format YYYY-MM-DDThh:mm:ssZ |
 
+The messages in Kafka topic can be Avro Records, or JSON serialized strings. See below on how to insert objects of
+these types in Kafka topics.
 
 ### Building and running
 
@@ -101,8 +103,10 @@ Here are the details of each field above -
  one or more topics. Get started with Kafka [here](http://docs.confluent.io/3.0.0/quickstart.html).
 
 * To insert the messages for the IoT devices in the Kafka topic, you can use a KafkaProducer. You can read more on
-how to use the KafkaProducer [here](http://docs.confluent.io/3.0.0/clients/producer.html). Here is a sample code to
-send such messages to a Kafka topic in the right format.
+how to use the KafkaProducer [here](http://docs.confluent.io/3.0.0/clients/producer.html).
+
+If you are using a Schema Registry (recommended), then the messages can be inserted in Kafka as Avro records. Here is
+the sample code to send such messages to a Kafka topic in the right format.
 
 ```java
     val props = new Properties()
@@ -132,6 +136,8 @@ send such messages to a Kafka topic in the right format.
     producer.send(producerRecord)
 ```
 
+If you are not using a Schema Registry, then the messages can be inserted in Kafka as JSON serialized strings.
+
 #### Steps
 
 Kafka Connect is a generic tool to copy data between Kafka and other systems (like Azure IoT Hub). To copy data from
@@ -149,24 +155,21 @@ Alternatively, you can directly download the jar file for Kafka Connect IoT Hub 
 
 2. Binplace the jar file in the Kafka installation libs folder (usually under KAFKA_HOME/libs).
 
-3. Update the config file "[connect-iothub-source.properties](connect-iothub-source.properties)" with the appropriate
-values as described in the section above. Binplace the file "connect-iothub-source.properties" in the Kafka
+3. Update the config file "[connect-iothub-sink.properties](connect-iothub-sink.properties)" with the appropriate
+values as described in the section above. Binplace the file "connect-iothub-sink.properties" in the Kafka
 installation config folder (usually under KAFKA_HOME/config).
 
 4. Update the Kafka Connect configuration file ("config/connect-standalone.properties" or
 "config/connect-distributed.properties") to point to the Kafka bootstrap servers.
 
-5. After binplacing the connector jar and starting Kafka and Zookeeper, update the config file "[connect-iothub-sink
-.properties](connect-iothub-sink.properties)" with the appropriate values as described in the section
-above. Binplace the file "connect-iothub-sink.properties" in the Kafka installation config folder (usually under
-KAFKA_HOME/config).
+5. Make sure Kafka server, Zookeeper, and optionally Schema Registry are running, as described [here](http://docs.confluent.io/3.0.0/quickstart.html)
 
 6. Start Kafka source connector in
 [standalone mode](http://docs.confluent.io/3.0.0/connect/userguide.html#standalone-worker-configuration) to read
 messages from Kafka topic and send them to the IoT Devices -
 
 ```
-bin/connect-standalone.sh config/connect-standalone.properties config/connect-iothub-source.properties
+bin/connect-standalone.sh config/connect-standalone.properties config/connect-iothub-sink.properties
 ```
 For distributed mode, the connector configuration will stay the same. For the detailed steps on how to do this, please
 follow the

@@ -20,7 +20,7 @@ class MockMessageSender(connectionString: String) extends MessageSender {
     val messageListValue = messageList.get
     val future = CompletableFuture.runAsync(new Runnable {
       override def run(): Unit = {
-        Thread.sleep(1000)
+        Thread.sleep(2000)
         messageListValue.add(message)
       }
     }, executor)

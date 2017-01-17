@@ -22,7 +22,7 @@ class IotHubSinkTaskTest extends FlatSpec with GivenWhenThen with JsonSerializat
     override def test(a: A): Boolean = f(a)
   }
 
-  "IotHubSinkTask put" should "validate schema of SinkRecords and send them to the right destiniation" in {
+  "IotHubSinkTask put" should "validate schema of SinkRecords and send them to the right destination" in {
 
     Given("IotHubSinkTask instance")
     val iotHubSinkTask = new TestIotHubSinkTask
@@ -43,7 +43,6 @@ class IotHubSinkTaskTest extends FlatSpec with GivenWhenThen with JsonSerializat
     Then("It sends the records to the right destination")
     Thread.sleep(1000)
     var sentRecords = iotHubSinkTask.getSentMessages()
-    assert(sentRecords.size != 0)
 
     When("Not all records have been sent and flush is called")
     assert(sentRecords.size < sinkRecords.size())
@@ -56,6 +55,38 @@ class IotHubSinkTaskTest extends FlatSpec with GivenWhenThen with JsonSerializat
     while (sentRecordsIterator.hasNext) {
       val sentRecord = sentRecordsIterator.next()
       val predicate = (r: SinkRecord) ⇒ r.value().asInstanceOf[Struct].getString("messageId") == sentRecord.getMessageId
+      val sinkRecord = sinkRecords.stream().filter(predicate).findAny()
+      assert(sinkRecord != null && sinkRecord.isPresent)
+    }
+  }
+
+  it should "deserialize records of string schema and send messages to IoT devices" in {
+    Given("IotHubSinkTask instance and sinkRecords with schema type String ")
+
+    val iotHubSinkTask = new TestIotHubSinkTask
+    iotHubSinkTask.start(SinkTestConfig.sinkTaskTestProps)
+    val sinkRecords = TestSinkRecords.getSinkRecordsWithStringSchema()
+    assert(sinkRecords != null)
+    assert(sinkRecords.size() > 0)
+
+    When("IotHubSinkTask.put is called")
+    iotHubSinkTask.put(sinkRecords)
+
+    Then("It sends the records to the right destination")
+    Thread.sleep(1000)
+    var sentRecords = iotHubSinkTask.getSentMessages()
+
+    When("Not all records have been sent and flush is called")
+    assert(sentRecords.size < sinkRecords.size())
+    iotHubSinkTask.flush(null)
+
+    Then("All records are sent before returning, and all messages contain all the right information")
+    sentRecords = iotHubSinkTask.getSentMessages()
+    assert(sentRecords.size == sinkRecords.size())
+    val sentRecordsIterator = sentRecords.iterator()
+    while (sentRecordsIterator.hasNext) {
+      val sentRecord = sentRecordsIterator.next()
+      val predicate = (r: SinkRecord) ⇒ r.value().asInstanceOf[String].contains(sentRecord.getMessageId)
       val sinkRecord = sinkRecords.stream().filter(predicate).findAny()
       assert(sinkRecord != null && sinkRecord.isPresent)
     }
@@ -79,11 +110,11 @@ class IotHubSinkTaskTest extends FlatSpec with GivenWhenThen with JsonSerializat
 
   it should "Throw an exception if records schema type that doesn't match the expected schema" in {
 
-    Given("IotHubSinkTask instance and sinkRecords with schema type String ")
+    Given("IotHubSinkTask instance and sinkRecords with schema type Int ")
 
     val iotHubSinkTask = new TestIotHubSinkTask
     iotHubSinkTask.start(SinkTestConfig.sinkTaskTestProps)
-    val sinkRecords = TestSinkRecords.getSinkRecordsWithStringSchema()
+    val sinkRecords = TestSinkRecords.getSinkRecordsWithInvalidSchema()
     assert(sinkRecords != null)
     assert(sinkRecords.size() > 0)
 

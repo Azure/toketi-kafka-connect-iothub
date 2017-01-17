@@ -4,15 +4,21 @@
 
 package com.microsoft.azure.iot.kafka.connect.sink.testhelpers
 
+import java.time.Instant
 import java.util
+import java.util.Date
 
+import com.microsoft.azure.iot.kafka.connect.JsonSerialization
+import com.microsoft.azure.iot.kafka.connect.sink.C2DMessage
 import org.apache.kafka.connect.data.{Schema, SchemaBuilder, Struct}
 import org.apache.kafka.connect.sink.SinkRecord
 
 import scala.collection.JavaConverters._
+import org.json4s.jackson.Serialization._
+
 import scala.util.Random
 
-object TestSinkRecords {
+object TestSinkRecords extends JsonSerialization {
 
   private val batchSize = 10
   private val topic     = "test"
@@ -36,13 +42,17 @@ object TestSinkRecords {
     })
   }
 
+  def getSinkRecordsWithInvalidSchema(): util.List[SinkRecord] = {
+    generateSinkRecords((i: Int) ⇒ {
+      (TestSchemas.invalidSchemaTypeSchema, "Foo")
+    })
+  }
+
   def getSinkRecordsWithStringSchema(): util.List[SinkRecord] = {
     generateSinkRecords((i: Int) ⇒ {
-      val value =
-        """{"deviceId": "device1",""" +
-          """"deviceId": "Turn off", """ +
-          """"messageId": "1"}"""
-      (TestSchemas.invalidSchemaTypeSchema, value)
+      val c2dMessage = C2DMessage(i.toString, "Turn Off", "messageId" + i.toString, Some(Date.from(Instant.now())))
+      val value = write(c2dMessage)
+      (TestSchemas.validStringSchema, value)
     })
   }
 
@@ -70,6 +80,30 @@ object TestSinkRecords {
       (struct.schema(), struct)
     })
   }
+
+  def getStringSchemaRecord(): SinkRecord = {
+    val value =
+      """{"messageId":"message1","message":"Turn on","deviceId":"device1","expiryTime":"2017-01-17T19:25:50Z"}"""
+    val record = new SinkRecord(topic, Random.nextInt(10), Schema.OPTIONAL_STRING_SCHEMA, null, Schema.STRING_SCHEMA,
+      value, 0)
+    record
+  }
+
+  def getStringSchemaRecord2(): SinkRecord = {
+    val value =
+      """{"messageId":"message1","message":"Turn on","deviceId":"device1"}"""
+    val record = new SinkRecord(topic, Random.nextInt(10), Schema.OPTIONAL_STRING_SCHEMA, null, Schema.STRING_SCHEMA,
+      value, 0)
+    record
+  }
+
+  def getInvalidScringSchemaRecord(): SinkRecord = {
+    val value =
+      """{"msgId":"message1","message":"Turn on","id":"device1","expiryTime":"2017-01-17T19:25:50Z"}"""
+    val record = new SinkRecord(topic, Random.nextInt(10), Schema.OPTIONAL_STRING_SCHEMA, null, Schema.STRING_SCHEMA,
+      value, 0)
+    record
+  }
 }
 
 object TestSchemas {
@@ -89,7 +123,9 @@ object TestSchemas {
     .field("deviceId", Schema.STRING_SCHEMA)
     .field("message", Schema.STRING_SCHEMA)
 
-  val invalidSchemaTypeSchema: Schema = Schema.STRING_SCHEMA
+  val invalidSchemaTypeSchema: Schema = Schema.OPTIONAL_STRING_SCHEMA
+
+  val validStringSchema: Schema = Schema.STRING_SCHEMA
 
   val invalidFieldTypeSchema: Schema = SchemaBuilder.struct()
     .field("deviceId", Schema.STRING_SCHEMA)

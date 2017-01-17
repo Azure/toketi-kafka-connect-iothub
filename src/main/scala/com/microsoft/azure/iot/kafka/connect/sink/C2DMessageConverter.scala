@@ -7,13 +7,15 @@ package com.microsoft.azure.iot.kafka.connect.sink
 import java.time.Instant
 import java.util.Date
 
+import com.microsoft.azure.iot.kafka.connect.JsonSerialization
 import org.apache.kafka.connect.data.{Schema, SchemaBuilder, Struct}
 import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.sink.SinkRecord
+import org.json4s.jackson.Serialization._
 
 import scala.collection.JavaConverters._
 
-object C2DMessageConverter {
+object C2DMessageConverter extends JsonSerialization {
 
   private val messageIdKey  = "messageId"
   private val messageKey    = "message"
@@ -33,7 +35,30 @@ object C2DMessageConverter {
 
   def validateSchemaAndGetMessage(record: SinkRecord): C2DMessage = {
     val schema = record.valueSchema()
-    validateSchema(schema)
+    schema.`type`() match {
+      case Schema.Type.STRING ⇒ deserializeMessage(record, schema)
+      case Schema.Type.STRUCT ⇒ validateStructSchemaAndGetMessage(record, schema)
+      case schemaType ⇒ throw new ConnectException(s"Schema of Kafka record is of type ${schema.`type`().toString}, " +
+        s"while the supported schemas are 'struct' and 'string'")
+    }
+  }
+
+  // Public for testing
+  def deserializeMessage(record: SinkRecord, schema: Schema): C2DMessage = {
+    try {
+      val stringValue = record.value().asInstanceOf[String]
+      val c2DMessage = read[C2DMessage](stringValue)
+      c2DMessage
+    } catch {
+      case e: Exception ⇒ throw new ConnectException(s"Unable to convert record with " +
+        s"schema ${schema.`type`().toString} and value ${record.value().toString} to C2D message"
+      )
+    }
+
+  }
+
+  private def validateStructSchemaAndGetMessage(record: SinkRecord, schema: Schema): C2DMessage = {
+    validateStructSchema(schema)
 
     val structValue = record.value().asInstanceOf[Struct]
     val deviceId = structValue.getString(deviceIdKey)
@@ -61,7 +86,7 @@ object C2DMessageConverter {
   }
 
   // Public for testing purposes
-  def validateSchema(schema: Schema): Unit = {
+  def validateStructSchema(schema: Schema): Unit = {
     if (schema.`type`() != expectedSchema.`type`()) {
       throw new ConnectException(s"Schema of Kafka record is of type ${schema.`type`().toString}, while expected " +
         s"schema of type ${expectedSchema.`type`().toString}")
