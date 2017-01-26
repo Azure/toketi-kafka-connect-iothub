@@ -4,7 +4,6 @@
 
 package com.microsoft.azure.iot.kafka.connect.sink.testhelpers
 
-
 import java.util
 import java.util.concurrent.{CompletableFuture, ConcurrentLinkedQueue, ExecutorService, Executors}
 

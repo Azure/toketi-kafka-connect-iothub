@@ -17,6 +17,9 @@ import org.apache.kafka.connect.sink.{SinkRecord, SinkTask}
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.{Await, Future, TimeoutException}
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class IotHubSinkTask extends SinkTask with LazyLogging with JsonSerialization {
 
@@ -49,6 +52,7 @@ class IotHubSinkTask extends SinkTask with LazyLogging with JsonSerialization {
             val c2DMessage = C2DMessageConverter.validateSchemaAndGetMessage(record)
             this.sendMessage(c2DMessage)
           }
+          logger.info(s"Started tasks to send ${records.size()} messages to devices.")
         }
       }
     } else {
@@ -65,7 +69,7 @@ class IotHubSinkTask extends SinkTask with LazyLogging with JsonSerialization {
     if (c2DMessage.expiryTime.isDefined) {
       message.setExpiryTimeUtc(c2DMessage.expiryTime.get)
     }
-    logger.info(s"Sending Message to Device - $message")
+    logger.debug(s"Sending Message to Device - $message")
     this.sendMessageFutures += this.messageSender.get.sendMessage(c2DMessage.deviceId, message)
   }
 
@@ -74,9 +78,26 @@ class IotHubSinkTask extends SinkTask with LazyLogging with JsonSerialization {
     this.waitForAllMessages()
   }
 
+  // Wait for pending tasks to complete. If some of the tasks take too long, cancel the remaining tasks to avoid Kafka
+  // Connect from timing out (default timeout is 30 seconds).
   private def waitForAllMessages(): Unit = {
     logger.info("Waiting for all send message tasks to complete")
-    CompletableFuture.allOf(this.sendMessageFutures:_*).join()
+
+    try {
+      val waitJob = Future {
+        CompletableFuture.allOf(this.sendMessageFutures: _*).join()
+      }
+      Await.result(waitJob, 20.seconds)
+    } catch {
+      case tex: TimeoutException ⇒ {
+        val completedFutures = this.sendMessageFutures.count(f ⇒ f.isDone)
+        val pendingFutures = this.sendMessageFutures.size - completedFutures
+
+        logger.error("Got timeout exception while waiting for send message tasks. Ignoring the pending tasks to avoid" +
+          " Kakfa Connect from timing out. " +
+          s"There are $completedFutures completed tasks and $pendingFutures pending tasks.")
+      }
+    }
     this.sendMessageFutures = mutable.ArrayBuffer.empty[CompletableFuture[Void]]
     logger.info(s"Done waiting for all send message tasks")
   }
