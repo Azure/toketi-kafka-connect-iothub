@@ -5,8 +5,9 @@ Kafka Connect Azure IoT Hub consists of 2 connectors - a source connector and a 
 is used to pump data from [Azure IoT Hub](https://azure.microsoft.com/en-us/services/iot-hub/) to
 [Apache Kafka](https://kafka.apache.org/), whereas the sink connector reads messages from Kafka and sends them to IoT
  devices via [Azure IoT Hub](https://azure.microsoft.com/en-us/services/iot-hub/). When used in tandem, the 2
- connectors allow communicating with IoT devices by simply posting and reading messages to Kafka topics. This should
- makie it easier for open source systems and other systems that already interface with Kafka to communicate with
+ connectors allow communicating with IoT devices by simply posting and reading messages to/from Kafka topics. This
+ should
+ make it easier for open source systems and other systems that already interface with Kafka to communicate with
  Azure IoT devices.
 
 For more information on the capabilities of the connectors and how to use them, please refer to the links below -

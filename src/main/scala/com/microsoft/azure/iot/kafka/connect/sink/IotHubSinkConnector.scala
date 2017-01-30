@@ -22,8 +22,7 @@ class IotHubSinkConnector extends SinkConnector with LazyLogging with JsonSerial
   override def taskClass(): Class[_ <: Task] = classOf[IotHubSinkTask]
 
   override def taskConfigs(maxTasks: Int): util.List[util.Map[String, String]] = {
-    val configList = (1 to maxTasks).map(c => this.props.asJava).toList.asJava
-    configList
+    (1 to maxTasks).map(c => this.props.asJava).toList.asJava
   }
 
   override def stop(): Unit = {

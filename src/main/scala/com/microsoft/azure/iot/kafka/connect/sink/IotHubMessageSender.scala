@@ -4,9 +4,7 @@
 
 package com.microsoft.azure.iot.kafka.connect.sink
 
-import java.util.concurrent.CompletableFuture
-
-import com.microsoft.azure.iot.service.sdk.{IotHubServiceClientProtocol, Message, ServiceClient}
+import com.microsoft.azure.sdk.iot.service.sdk.{IotHubServiceClientProtocol, Message, ServiceClient}
 
 class IotHubMessageSender(connectionString: String) extends MessageSender {
 
@@ -14,11 +12,11 @@ class IotHubMessageSender(connectionString: String) extends MessageSender {
     IotHubServiceClientProtocol.AMQPS)
   this.serviceClient.open()
 
-  def sendMessage(deviceId: String, message: Message): CompletableFuture[Void] = {
-    this.serviceClient.sendAsync(deviceId, message)
+  def sendMessage(deviceId: String, message: Message): Unit = {
+    this.serviceClient.send(deviceId, message)
   }
 
   def close(): Unit = {
-    this.serviceClient.closeAsync()
+    this.serviceClient.close()
   }
 }

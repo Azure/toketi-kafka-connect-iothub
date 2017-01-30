@@ -8,7 +8,7 @@ import java.util.function._
 
 import com.microsoft.azure.iot.kafka.connect.JsonSerialization
 import com.microsoft.azure.iot.kafka.connect.sink.testhelpers.{SinkTestConfig, TestIotHubSinkTask, TestSinkRecords}
-import com.microsoft.azure.iot.service.sdk.DeliveryAcknowledgement
+import com.microsoft.azure.sdk.iot.service.sdk.DeliveryAcknowledgement
 import org.apache.kafka.connect.data.Struct
 import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.sink.SinkRecord
@@ -42,18 +42,10 @@ class IotHubSinkTaskTest extends FlatSpec with GivenWhenThen with JsonSerializat
 
     Then("It sends the records to the right destination")
     Thread.sleep(1000)
-    var sentRecords = iotHubSinkTask.getSentMessages()
+    val sentRecords = iotHubSinkTask.getSentMessages()
 
-    When("Not all records have been sent and flush is called")
-    assert(sentRecords.size < sinkRecords.size())
-    iotHubSinkTask.flush(null)
-
-    Then("All records are sent before returning, and all messages contain all the right information")
-    sentRecords = iotHubSinkTask.getSentMessages()
     assert(sentRecords.size == sinkRecords.size())
-    val sentRecordsIterator = sentRecords.iterator()
-    while (sentRecordsIterator.hasNext) {
-      val sentRecord = sentRecordsIterator.next()
+    for (sentRecord ← sentRecords) {
       val predicate = (r: SinkRecord) ⇒ r.value().asInstanceOf[Struct].getString("messageId") == sentRecord.getMessageId
       val sinkRecord = sinkRecords.stream().filter(predicate).findAny()
       assert(sinkRecord != null && sinkRecord.isPresent)
@@ -74,18 +66,10 @@ class IotHubSinkTaskTest extends FlatSpec with GivenWhenThen with JsonSerializat
 
     Then("It sends the records to the right destination")
     Thread.sleep(1000)
-    var sentRecords = iotHubSinkTask.getSentMessages()
+    val sentRecords = iotHubSinkTask.getSentMessages()
 
-    When("Not all records have been sent and flush is called")
-    assert(sentRecords.size < sinkRecords.size())
-    iotHubSinkTask.flush(null)
-
-    Then("All records are sent before returning, and all messages contain all the right information")
-    sentRecords = iotHubSinkTask.getSentMessages()
     assert(sentRecords.size == sinkRecords.size())
-    val sentRecordsIterator = sentRecords.iterator()
-    while (sentRecordsIterator.hasNext) {
-      val sentRecord = sentRecordsIterator.next()
+    for (sentRecord ← sentRecords) {
       val predicate = (r: SinkRecord) ⇒ r.value().asInstanceOf[String].contains(sentRecord.getMessageId)
       val sinkRecord = sinkRecords.stream().filter(predicate).findAny()
       assert(sinkRecord != null && sinkRecord.isPresent)

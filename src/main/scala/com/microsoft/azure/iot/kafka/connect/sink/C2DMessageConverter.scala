@@ -57,6 +57,29 @@ object C2DMessageConverter extends JsonSerialization {
 
   }
 
+  // Public for testing purposes
+  def validateStructSchema(schema: Schema): Unit = {
+    if (schema.`type`() != expectedSchema.`type`()) {
+      throw new ConnectException(s"Schema of Kafka record is of type ${schema.`type`().toString}, while expected " +
+        s"schema of type ${expectedSchema.`type`().toString}")
+    }
+
+    for (expectedField ← expectedSchema.fields().asScala) {
+      val field = schema.field(expectedField.name())
+      if (field != null) {
+        val expectedFieldSchema = expectedField.schema()
+        val fieldSchema = field.schema()
+        if (fieldSchema.`type`() != expectedFieldSchema.`type`()) {
+          throw new ConnectException(s"Schema type of Kafka record field ${field.name()} - ${fieldSchema.`type`()} " +
+            s"does not match the expected schema type ${expectedFieldSchema.`type`()}")
+        }
+      }
+      else if (!expectedField.schema().isOptional) {
+        throw new ConnectException(s"Schema of Kafka record does not contain required field ${expectedField.name()}")
+      }
+    }
+  }
+
   private def validateStructSchemaAndGetMessage(record: SinkRecord, schema: Schema): C2DMessage = {
     validateStructSchema(schema)
 
@@ -83,28 +106,5 @@ object C2DMessageConverter extends JsonSerialization {
       }
     }
     None
-  }
-
-  // Public for testing purposes
-  def validateStructSchema(schema: Schema): Unit = {
-    if (schema.`type`() != expectedSchema.`type`()) {
-      throw new ConnectException(s"Schema of Kafka record is of type ${schema.`type`().toString}, while expected " +
-        s"schema of type ${expectedSchema.`type`().toString}")
-    }
-
-    for (expectedField ← expectedSchema.fields().asScala) {
-      val field = schema.field(expectedField.name())
-      if (field != null) {
-        val expectedFieldSchema = expectedField.schema()
-        val fieldSchema = field.schema()
-        if (fieldSchema.`type`() != expectedFieldSchema.`type`()) {
-          throw new ConnectException(s"Schema type of Kafka record field ${field.name()} - ${fieldSchema.`type`()} " +
-            s"does not match the expected schema type ${expectedFieldSchema.`type`()}")
-        }
-      }
-      else if (!expectedField.schema().isOptional) {
-        throw new ConnectException(s"Schema of Kafka record does not contain required field ${expectedField.name()}")
-      }
-    }
   }
 }

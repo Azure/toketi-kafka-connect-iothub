@@ -4,14 +4,14 @@
 
 package com.microsoft.azure.iot.kafka.connect.sink.testhelpers
 
-import java.util
-
 import com.microsoft.azure.iot.kafka.connect.sink.{IotHubSinkTask, MessageSender}
-import com.microsoft.azure.iot.service.sdk.{DeliveryAcknowledgement, Message}
+import com.microsoft.azure.sdk.iot.service.sdk.{DeliveryAcknowledgement, Message}
+
+import scala.collection.mutable.ArrayBuffer
 
 class TestIotHubSinkTask extends IotHubSinkTask {
 
-  def getSentMessages(): util.Collection[Message] = this.messageSender.get.asInstanceOf[MockMessageSender].getSentMessages()
+  def getSentMessages(): ArrayBuffer[Message] = this.messageSender.get.asInstanceOf[MockMessageSender].getSentMessages()
 
   def getDeliveryAcknowledgement(): DeliveryAcknowledgement = this.acknowledgement
 

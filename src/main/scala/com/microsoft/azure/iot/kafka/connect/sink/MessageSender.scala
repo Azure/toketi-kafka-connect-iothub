@@ -4,12 +4,10 @@
 
 package com.microsoft.azure.iot.kafka.connect.sink
 
-import java.util.concurrent.CompletableFuture
-
-import com.microsoft.azure.iot.service.sdk.Message
+import com.microsoft.azure.sdk.iot.service.sdk.Message
 
 trait MessageSender {
-  def sendMessage(deviceId: String, message: Message): CompletableFuture[Void]
+  def sendMessage(deviceId: String, message: Message)
 
   def close()
 }

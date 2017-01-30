@@ -41,9 +41,9 @@ name=AzureIotHubConnector
 tasks.max=1
 Kafka.Topic=IotTopic
 IotHub.EventHubCompatibleName=iothub-toketi
-IotHub.EventHubCompatibleEndpoint=sb://iothub-ns-toketi-001.servicebus.windows.net/
+IotHub.EventHubCompatibleEndpoint=sb://iothub-001.servicebus.windows.net/
 IotHub.AccessKeyName=service
-IotHub.AccessKeyValue=6XdRSFB9H61f+N3uOdBJiKwzeqbZUj1K//T2jFyewN4=
+IotHub.AccessKeyValue=4KsdfiB9J899a+N3iwerjKwzeqbZUj1K//KKj1ye9i3=
 IotHub.ConsumerGroup=$Default
 IotHub.Partitions=4
 IotHub.StartTime=2016-11-28T00:00:00Z

@@ -3,8 +3,16 @@ ________________________
 
 The Sink connector allows you to send messages to Azure IoT devices by simply posting messages to Kafka topics. The
 connector sends the messages to Azure IoT Hub, which in turn forwards them to the right devices. The
-messages need to be in a specific format (details below), that allow the connector to extract the information
+messages need to be in a specific format (details below), that allows the connector to extract the information
 necessary to send them to the right devices.
+
+> Note: At the moment, the Sink connector only supports C2D messages, and does not support other means of communication.
+> See
+> [Cloud-to-device communications guidance](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-c2d-guidance)
+> to see what that means. Also, the connector does not support getting feedback from the devices on the status of the
+> messages (whether accepted, rejected or expired). If you want to get feedback, you will need to do it manually.
+> Please refer to the documentation [here](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-java-java-c2d) on
+> how to do that.
 
 ### Configuration
 
@@ -32,20 +40,15 @@ connector.class=com.microsoft.azure.iot.kafka.connect.sink.IotHubSinkConnector
 name=AzureIotHubSinkConnector
 tasks.max=1
 topics=testtopic
-IotHub.ConnectionString=HostName=Test.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=aBCdeBb5HffTTs/J9ikdcqab1JNMB0ot=
+IotHub.ConnectionString=HostName=Test.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=aBCdeBsdfwfTTs/isuwselskab1Jksjdsot=
 IotHub.MessageDeliveryAcknowledgement=None
 ```
-
-> Note: At the moment, the Sink connector does not support getting feedback from the devices on the status of the
-> messages (whether accepted or rejected). If you want to get feedback, you will need to do it manually. Please refer
-> to the documentation [here](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-java-java-c2d) on how to do that.
-
 
 ### Data format
 
 The sink connector expects the messages in the Kafka topic to have the schema below, so that it can extract the
 information required to send the message to the IoT device. If a record is not in the expected format, the connector
-will throw an exception.
+will throw an exception, and will have to be re-started manually.
 
 ```json
 {
@@ -107,11 +110,18 @@ use the right Azure IoT Hub and Kafka settings. For more details on using Kafka 
 * You also need to have Apache Kafka v0.10 installation running, that contains messages to be sent to the IoT devices in
  one or more topics. Get started with Kafka [here](http://docs.confluent.io/3.0.0/quickstart.html).
 
- The steps to insert messages in Kafka topics and to run the Sink connector depend on whether you are using the
- [Schema Registry](http://docs.confluent.io/3.0.0/schema-registry/docs/) along with the Confluent platform. So please
- follow the right set of steps below depending on your choice.
+#### Steps
 
-#### Steps when using Schema Registry
+Here are the steps to run the Kafka Connect IoT Hub Sink Connector in
+[standalone mode](http://docs.confluent.io/3.0.0/connect/userguide.html#standalone-worker-configuration). For
+[distributed mode](http://docs.confluent.io/3.0.0/connect/userguide.html#distributed-worker-configuration), the
+connector configuration will stay the same.
+
+The steps to insert messages in Kafka topics and to run the Sink connector depend on whether you are using the
+[Schema Registry](http://docs.confluent.io/3.0.0/schema-registry/docs/) along with the Confluent platform. So please
+follow the right set of steps below depending on your choice.
+
+##### Steps when using Schema Registry
 
 When using [Schema Registry](http://docs.confluent.io/3.0.0/schema-registry/docs/) along with the
 [Confluent Platform](http://docs.confluent.io/3.0.0/platform.html), messages are inserted in Kafka topic as Avro records
@@ -131,8 +141,13 @@ When using [Schema Registry](http://docs.confluent.io/3.0.0/schema-registry/docs
  values as described in the section above. Binplace the file "connect-iothub-sink.properties" in the Kafka
  installation config folder (usually under KAFKA_HOME/etc).
 
- 4. Update the Kafka Connect configuration file ("etc/kafka/connect-standalone.properties" or
- "etc/kafka/connect-distributed.properties") to point to the Kafka bootstrap servers.
+ 4. Make the following updates to the Kafka Connect configuration file (typically "etc/kafka/connect-standalone.properties)" -
+   * Update bootstrap.servers to point to the Kafka server.
+   * Add the following setting to the file. This will make sure that the Kafka sink connector handles only 10 records
+     at a time, preventing Kafka connect from timing out the operation.
+ ```
+ consumer.max.poll.records=10
+ ```
 
  5. Make sure Kafka server, Zookeeper, and Schema Registry are running, as described
  [here](http://docs.confluent.io/3.0.0/quickstart.html)
@@ -144,10 +159,6 @@ When using [Schema Registry](http://docs.confluent.io/3.0.0/schema-registry/docs
  ```
  bin/connect-standalone.sh config/connect-standalone.properties config/connect-iothub-sink.properties
  ```
- For distributed mode, the connector configuration will stay the same. For the detailed steps on how to do this, please
- follow the
- [Confluent Kafka Connect documentation](http://docs.confluent.io/3.0.0/connect/userguide.html#distributed-worker-configuration)
- on this topic.
 
 7. Insert messages to be sent to the IoT devices in the Kafka topic as Avro records. One way you can do that is using a
 [KafkaProducer](http://docs.confluent.io/3.0.0/clients/producer.html). Here is some sample code to send such messages to
@@ -181,7 +192,7 @@ When using [Schema Registry](http://docs.confluent.io/3.0.0/schema-registry/docs
     producer.send(producerRecord)
 ```
 
-#### Steps when not using Schema Registry
+##### Steps when not using Schema Registry
 
 If you are using the standard Apache Kakfa without the Schema Registry integration, messages are inserted in Kafka
 topics as JSON strings, which are then deserialized by the Sink connector.
@@ -200,11 +211,15 @@ Alternatively, you can directly download the jar file for Kafka Connect IoT Hub 
 values as described in the section above. Binplace the file "connect-iothub-sink.properties" in the Kafka
 installation config folder (usually under KAFKA_HOME/config).
 
-4. Make the following updates to the Kafka Connect configuration file ("config/connect-standalone.properties" or
-"config/connect-distributed.properties") -
+4. Make the following updates to the Kafka Connect configuration file (typically "config/connect-standalone.properties") -
   * Update bootstrap.servers to point to the Kafka server.
   * Update key.converter and value.converter to use org.apache.kafka.connect.storage.StringConverter (instead of the
     default org.apache.kafka.connect.json.JsonConverter)
+  * Add the following setting to the file. This will make sure that the Kafka sink connector handles only 10 records
+    at a time, preventing Kafka connect from timing out the operation.
+```
+consumer.max.poll.records=10
+```
 
 5. Make sure Kafka server and Zookeeper are running, as described [here](https://kafka.apache.org/documentation#quickstart)
 
@@ -215,10 +230,6 @@ messages from Kafka topic and send them to the IoT Devices -
 ```
 bin/connect-standalone.sh config/connect-standalone.properties config/connect-iothub-sink.properties
 ```
-For distributed mode, the connector configuration will stay the same. For the detailed steps on how to do this, please
-follow the
-[Confluent Kafka Connect documentation](http://docs.confluent.io/3.0.0/connect/userguide.html#distributed-worker-configuration)
-on this topic.
 
 7. Insert messages to be sent to the IoT devices in the Kafka topic as JSON strings. One way you can do that is using a
 [KafkaProducer](https://kafka.apache.org/documentation/#producerapi). Here is some sample code to send such messages to
@@ -243,3 +254,4 @@ on this topic.
 ## Future work
 
 * Add support to get feedback on the messages sent to the Azure IoT Devices.
+* Add support for other means of communication from cloud-to-device (for e.g. direct methods)
