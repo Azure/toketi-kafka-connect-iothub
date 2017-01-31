@@ -51,8 +51,7 @@ class IotHubSourceTaskTest extends FlatSpec with GivenWhenThen with JsonSerializ
     }
   }
 
-  "IotHubSourceTask start"
-  it should "initialize all properties" in {
+  "IotHubSourceTask start" should "initialize all properties" in {
 
     Given("A list of properties for IotHubSourceTask")
     val props: util.Map[String, String] = TestConfig.sourceTaskTestProps
