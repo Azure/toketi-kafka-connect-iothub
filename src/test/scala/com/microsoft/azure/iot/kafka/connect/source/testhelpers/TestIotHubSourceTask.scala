@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft. All rights reserved.
 
-package com.microsoft.azure.iot.kafka.connect.testhelpers
+package com.microsoft.azure.iot.kafka.connect.source.testhelpers
 
 import java.time.Instant
 
-import com.microsoft.azure.iot.kafka.connect.{DataReceiver, IotHubSourceTask}
+import com.microsoft.azure.iot.kafka.connect.source.{DataReceiver, IotHubSourceTask}
 
 class TestIotHubSourceTask extends IotHubSourceTask {
   override def getDataReceiver(connectionString: String, receiverConsumerGroup: String, partition: String,

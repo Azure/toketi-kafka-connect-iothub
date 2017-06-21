@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 
-package com.microsoft.azure.iot.kafka.connect
+package com.microsoft.azure.iot.kafka.connect.source
 
 import java.time.Instant
 import java.util

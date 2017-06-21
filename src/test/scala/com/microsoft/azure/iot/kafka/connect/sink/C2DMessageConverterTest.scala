@@ -7,8 +7,8 @@ package com.microsoft.azure.iot.kafka.connect.sink
 import java.time.Instant
 import java.util.Date
 
-import com.microsoft.azure.iot.kafka.connect.JsonSerialization
 import com.microsoft.azure.iot.kafka.connect.sink.testhelpers.{TestSchemas, TestSinkRecords}
+import com.microsoft.azure.iot.kafka.connect.source.JsonSerialization
 import org.apache.kafka.connect.errors.ConnectException
 import org.scalatest.{FlatSpec, GivenWhenThen}
 

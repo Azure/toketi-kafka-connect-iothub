@@ -8,7 +8,7 @@ import java.time.Instant
 import java.util
 import java.util.Date
 
-import com.microsoft.azure.iot.kafka.connect.JsonSerialization
+import com.microsoft.azure.iot.kafka.connect.source.JsonSerialization
 import com.microsoft.azure.iot.kafka.connect.sink.C2DMessage
 import org.apache.kafka.connect.data.{Schema, SchemaBuilder, Struct}
 import org.apache.kafka.connect.sink.SinkRecord

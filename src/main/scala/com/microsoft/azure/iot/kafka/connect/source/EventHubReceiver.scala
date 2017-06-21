@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 
-package com.microsoft.azure.iot.kafka.connect
+package com.microsoft.azure.iot.kafka.connect.source
 
 import java.time.Instant
 
@@ -32,7 +32,7 @@ class EventHubReceiver(val connectionString: String, val receiverConsumerGroup: 
     if (this.eventHubReceiver != null) {
       this.eventHubReceiver.synchronized {
         this.isClosing = true
-        (eventHubReceiver.close()).join()
+        eventHubReceiver.close().join()
       }
     }
   }
@@ -50,7 +50,7 @@ class EventHubReceiver(val connectionString: String, val receiverConsumerGroup: 
             if (batch != null) {
               val batchIterable = batch.asScala
               iotMessages ++= batchIterable.map(e => {
-                val content = new String(e.getBody)
+                val content = new String(e.getBytes)
                 val iotDeviceData = IotMessage(content, e.getSystemProperties.asScala, e.getProperties.asScala)
                 iotDeviceData
               })

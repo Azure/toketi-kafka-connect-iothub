@@ -5,7 +5,7 @@
 package com.microsoft.azure.iot.kafka.connect.sink.testhelpers
 
 import com.microsoft.azure.iot.kafka.connect.sink.MessageSender
-import com.microsoft.azure.sdk.iot.service.sdk.Message
+import com.microsoft.azure.sdk.iot.service.Message
 
 import scala.collection.mutable.ArrayBuffer
 

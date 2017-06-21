@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft. All rights reserved.
 
-package com.microsoft.azure.iot.kafka.connect.testhelpers
+package com.microsoft.azure.iot.kafka.connect.source.testhelpers
 
 import java.util
 
-import com.microsoft.azure.iot.kafka.connect.IotHubSourceConfig
+import com.microsoft.azure.iot.kafka.connect.source.IotHubSourceConfig
 import com.microsoft.azure.servicebus.ConnectionStringBuilder
 import com.typesafe.config.ConfigFactory
 

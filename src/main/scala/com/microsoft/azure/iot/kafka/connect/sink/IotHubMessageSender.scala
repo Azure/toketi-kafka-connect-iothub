@@ -4,7 +4,7 @@
 
 package com.microsoft.azure.iot.kafka.connect.sink
 
-import com.microsoft.azure.sdk.iot.service.sdk.{IotHubServiceClientProtocol, Message, ServiceClient}
+import com.microsoft.azure.sdk.iot.service.{IotHubServiceClientProtocol, Message, ServiceClient}
 
 class IotHubMessageSender(connectionString: String) extends MessageSender {
 

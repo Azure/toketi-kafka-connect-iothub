@@ -6,9 +6,9 @@ package com.microsoft.azure.iot.kafka.connect.sink
 
 import java.util.function._
 
-import com.microsoft.azure.iot.kafka.connect.JsonSerialization
+import com.microsoft.azure.iot.kafka.connect.source.JsonSerialization
 import com.microsoft.azure.iot.kafka.connect.sink.testhelpers.{SinkTestConfig, TestIotHubSinkTask, TestSinkRecords}
-import com.microsoft.azure.sdk.iot.service.sdk.DeliveryAcknowledgement
+import com.microsoft.azure.sdk.iot.service.DeliveryAcknowledgement
 import org.apache.kafka.connect.data.Struct
 import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.sink.SinkRecord

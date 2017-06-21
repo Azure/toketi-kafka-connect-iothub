@@ -6,7 +6,7 @@ package com.microsoft.azure.iot.kafka.connect.sink
 
 import java.util.Map
 
-import com.microsoft.azure.sdk.iot.service.sdk.DeliveryAcknowledgement
+import com.microsoft.azure.sdk.iot.service.DeliveryAcknowledgement
 import org.apache.kafka.common.config.ConfigDef.{Importance, Type, Width}
 import org.apache.kafka.common.config.{AbstractConfig, ConfigDef}
 

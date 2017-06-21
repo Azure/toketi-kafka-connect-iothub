@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 
-package com.microsoft.azure.iot.kafka.connect
+package com.microsoft.azure.iot.kafka.connect.source
 
 import com.microsoft.azure.eventhubs.EventHubClient
 import org.apache.kafka.common.config.ConfigDef.{Importance, Type, Width}
