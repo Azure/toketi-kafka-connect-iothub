@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft. All rights reserved.
 
-package com.microsoft.azure.iot.kafka.connect
+package com.microsoft.azure.iot.kafka.connect.source
 
 import java.time.Instant
 
-import com.microsoft.azure.iot.kafka.connect.testhelpers.TestConfig
+import com.microsoft.azure.iot.kafka.connect.source.testhelpers.TestConfig
 import org.apache.kafka.connect.errors.ConnectException
 import org.json4s.jackson.Serialization.read
 import org.scalatest.{FlatSpec, GivenWhenThen}

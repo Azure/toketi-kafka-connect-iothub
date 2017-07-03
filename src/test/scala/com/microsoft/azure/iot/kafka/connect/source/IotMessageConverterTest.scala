@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft. All rights reserved.
 
-package com.microsoft.azure.iot.kafka.connect
+package com.microsoft.azure.iot.kafka.connect.source
 
 import java.text.SimpleDateFormat
 import java.time.Instant
 
-import com.microsoft.azure.iot.kafka.connect.testhelpers.DeviceTemperature
+import com.microsoft.azure.iot.kafka.connect.source.testhelpers.DeviceTemperature
 import com.microsoft.azure.servicebus.amqp.AmqpConstants
 import org.apache.kafka.connect.data.Struct
 import org.json4s.jackson.Serialization._
@@ -36,7 +36,7 @@ class IotMessageConverterTest extends FlatSpec with GivenWhenThen with JsonSeria
       AmqpConstants.ENQUEUED_TIME_UTC_ANNOTATION_NAME → enqueuedDate)
 
     val timestamp = Instant.now().toString
-    val messageProperties = mutable.Map[String, String](
+    val messageProperties = mutable.Map[String, Object](
       "timestamp" → timestamp,
       "contentType" → "temperature"
     )
@@ -71,7 +71,7 @@ class IotMessageConverterTest extends FlatSpec with GivenWhenThen with JsonSeria
     val deviceTempStr = write(deviceTemp)
 
     val systemProperties = mutable.Map.empty[String, Object]
-    val messageProperties = mutable.Map.empty[String, String]
+    val messageProperties = mutable.Map.empty[String, Object]
 
     val iotMessage = IotMessage(deviceTempStr, systemProperties, messageProperties)
 

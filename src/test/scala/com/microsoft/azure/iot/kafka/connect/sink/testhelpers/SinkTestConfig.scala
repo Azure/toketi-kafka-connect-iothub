@@ -7,7 +7,7 @@ package com.microsoft.azure.iot.kafka.connect.sink.testhelpers
 import java.util
 
 import com.microsoft.azure.iot.kafka.connect.sink.IotHubSinkConfig
-import com.microsoft.azure.sdk.iot.service.sdk.DeliveryAcknowledgement
+import com.microsoft.azure.sdk.iot.service.DeliveryAcknowledgement
 import com.typesafe.config.ConfigFactory
 
 object SinkTestConfig {

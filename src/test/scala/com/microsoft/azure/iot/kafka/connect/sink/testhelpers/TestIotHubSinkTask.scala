@@ -5,7 +5,7 @@
 package com.microsoft.azure.iot.kafka.connect.sink.testhelpers
 
 import com.microsoft.azure.iot.kafka.connect.sink.{IotHubSinkTask, MessageSender}
-import com.microsoft.azure.sdk.iot.service.sdk.{DeliveryAcknowledgement, Message}
+import com.microsoft.azure.sdk.iot.service.{DeliveryAcknowledgement, Message}
 
 import scala.collection.mutable.ArrayBuffer
 

@@ -6,8 +6,8 @@ package com.microsoft.azure.iot.kafka.connect.sink
 
 import java.util
 
-import com.microsoft.azure.iot.kafka.connect.JsonSerialization
-import com.microsoft.azure.sdk.iot.service.sdk.{DeliveryAcknowledgement, Message}
+import com.microsoft.azure.iot.kafka.connect.source.JsonSerialization
+import com.microsoft.azure.sdk.iot.service.{DeliveryAcknowledgement, Message}
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.clients.consumer.OffsetAndMetadata
 import org.apache.kafka.common.TopicPartition
@@ -54,7 +54,7 @@ class IotHubSinkTask extends SinkTask with LazyLogging with JsonSerialization {
   }
 
   private def sendMessage(c2DMessage: C2DMessage): Unit = {
-    logger.debug(s"Sending c2d message ${c2DMessage.toString}")
+    logger.info(s"Sending c2d message ${c2DMessage.toString}")
     val message = new Message(c2DMessage.message)
     message.setMessageId(c2DMessage.messageId)
     message.setDeliveryAcknowledgement(acknowledgement)

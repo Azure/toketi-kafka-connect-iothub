@@ -4,7 +4,7 @@
 
 package com.microsoft.azure.iot.kafka.connect.sink
 
-import com.microsoft.azure.iot.kafka.connect.JsonSerialization
+import com.microsoft.azure.iot.kafka.connect.source.JsonSerialization
 import com.microsoft.azure.iot.kafka.connect.sink.testhelpers.SinkTestConfig
 import org.apache.kafka.connect.errors.ConnectException
 import org.scalatest.{FlatSpec, GivenWhenThen}

@@ -100,7 +100,7 @@ these types in Kafka topics.
 Kafka Connect is a generic tool to copy data between Kafka and other systems (like Azure IoT Hub). To copy data from
 Azure IoT Hub to Kafka, you need to make the code from this repository available to Kafka Connect and configure it to
 use the right Azure IoT Hub and Kafka settings. For more details on using Kafka Connect, you can refer to the
-[Kafka Connect user guide](http://docs.confluent.io/3.0.0/connect/userguide.html).
+[Kafka Connect user guide](http://docs.confluent.io/3.2.2/connect/userguide.html).
 
 #### Pre-requisites
 
@@ -108,23 +108,23 @@ use the right Azure IoT Hub and Kafka settings. For more details on using Kafka 
 [here](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-java-java-getstarted).
 
 * You also need to have Apache Kafka v0.10 installation running, that contains messages to be sent to the IoT devices in
- one or more topics. Get started with Kafka [here](http://docs.confluent.io/3.0.0/quickstart.html).
+ one or more topics. Get started with Kafka [here](http://docs.confluent.io/3.2.2/quickstart.html).
 
 #### Steps
 
 Here are the steps to run the Kafka Connect IoT Hub Sink Connector in
-[standalone mode](http://docs.confluent.io/3.0.0/connect/userguide.html#standalone-worker-configuration). For
-[distributed mode](http://docs.confluent.io/3.0.0/connect/userguide.html#distributed-worker-configuration), the
+[standalone mode](http://docs.confluent.io/3.2.2/connect/userguide.html#standalone-worker-configuration). For
+[distributed mode](http://docs.confluent.io/3.2.2/connect/userguide.html#distributed-worker-configuration), the
 connector configuration will stay the same.
 
 The steps to insert messages in Kafka topics and to run the Sink connector depend on whether you are using the
-[Schema Registry](http://docs.confluent.io/3.0.0/schema-registry/docs/) along with the Confluent platform. So please
+[Schema Registry](http://docs.confluent.io/3.2.2/schema-registry/docs/) along with the Confluent platform. So please
 follow the right set of steps below depending on your choice.
 
 ##### Steps when using Schema Registry
 
-When using [Schema Registry](http://docs.confluent.io/3.0.0/schema-registry/docs/) along with the
-[Confluent Platform](http://docs.confluent.io/3.0.0/platform.html), messages are inserted in Kafka topic as Avro records
+When using [Schema Registry](http://docs.confluent.io/3.2.2/schema-registry/docs/) along with the
+[Confluent Platform](http://docs.confluent.io/3.2.2/platform.html), messages are inserted in Kafka topic as Avro records
  which include the schema of the messages.
 
  1. Build the source code after cloning this repository using the following command, which will generate a jar file with
@@ -150,10 +150,10 @@ When using [Schema Registry](http://docs.confluent.io/3.0.0/schema-registry/docs
  ```
 
  5. Make sure Kafka server, Zookeeper, and Schema Registry are running, as described
- [here](http://docs.confluent.io/3.0.0/quickstart.html)
+ [here](http://docs.confluent.io/3.2.2/quickstart.html)
 
  6. Start Kafka source connector in
- [standalone mode](http://docs.confluent.io/3.0.0/connect/userguide.html#standalone-worker-configuration) to read
+ [standalone mode](http://docs.confluent.io/3.2.2/connect/userguide.html#standalone-worker-configuration) to read
  messages from Kafka topic and send them to the IoT Devices -
 
  ```
@@ -161,7 +161,7 @@ When using [Schema Registry](http://docs.confluent.io/3.0.0/schema-registry/docs
  ```
 
 7. Insert messages to be sent to the IoT devices in the Kafka topic as Avro records. One way you can do that is using a
-[KafkaProducer](http://docs.confluent.io/3.0.0/clients/producer.html). Here is some sample code to send such messages to
+[KafkaProducer](http://docs.confluent.io/3.2.2/clients/producer.html). Here is some sample code to send such messages to
  a Kafka topic in the right format.
 
 ```java
@@ -224,7 +224,7 @@ consumer.max.poll.records=10
 5. Make sure Kafka server and Zookeeper are running, as described [here](https://kafka.apache.org/documentation#quickstart)
 
 6. Start Kafka source connector in
-[standalone mode](http://docs.confluent.io/3.0.0/connect/userguide.html#standalone-worker-configuration) to read
+[standalone mode](http://docs.confluent.io/3.2.2/connect/userguide.html#standalone-worker-configuration) to read
 messages from Kafka topic and send them to the IoT Devices -
 
 ```

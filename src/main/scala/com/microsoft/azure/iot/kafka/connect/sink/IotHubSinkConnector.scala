@@ -6,7 +6,7 @@ package com.microsoft.azure.iot.kafka.connect.sink
 
 import java.util
 
-import com.microsoft.azure.iot.kafka.connect.JsonSerialization
+import com.microsoft.azure.iot.kafka.connect.source.JsonSerialization
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.common.config.{ConfigDef, ConfigException}
 import org.apache.kafka.connect.connector.Task
@@ -22,7 +22,7 @@ class IotHubSinkConnector extends SinkConnector with LazyLogging with JsonSerial
   override def taskClass(): Class[_ <: Task] = classOf[IotHubSinkTask]
 
   override def taskConfigs(maxTasks: Int): util.List[util.Map[String, String]] = {
-    (1 to maxTasks).map(c => this.props.asJava).toList.asJava
+    (1 to maxTasks).map(_ => this.props.asJava).toList.asJava
   }
 
   override def stop(): Unit = {

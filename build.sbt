@@ -12,14 +12,14 @@ scalacOptions ++= Seq("-deprecation", "-explaintypes", "-unchecked", "-feature")
 
 libraryDependencies ++= {
 
-  val kafkaVersion = "0.10.0.1"
-  val azureEventHubSDKVersion = "0.9.0"
+  val kafkaVersion = "0.10.2.1"
+  val azureEventHubSDKVersion = "0.14.0"
   val scalaLoggingVersion = "3.5.0"
   val logbackClassicVersion = "1.1.7"
   val scalaTestVersion = "3.0.0"
   val configVersion = "1.3.1"
   val json4sVersion = "3.5.0"
-  val iotHubServiceClientVersion = "1.0.12"
+  val iotHubServiceClientVersion = "1.4.22"
 
   Seq(
     "org.apache.kafka" % "connect-api" % kafkaVersion % "provided",
