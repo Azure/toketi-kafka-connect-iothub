@@ -36,7 +36,7 @@ the beginning.
 Here is a sample connect-iothub-source.properties file. (Some of these values are not configurable, and hence omitted
   from the list above)
 ```
-connector.class=com.microsoft.azure.iot.kafka.connect.IotHubSourceConnector
+connector.class=com.microsoft.azure.iot.kafka.connect.source.IotHubSourceConnector
 name=AzureIotHubConnector
 tasks.max=1
 Kafka.Topic=IotTopic
