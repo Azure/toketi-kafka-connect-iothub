@@ -17,6 +17,8 @@ import scala.util.control.NonFatal
 
 class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerialization {
 
+  private var eventHubName = ""
+
   // Public for testing
   val partitionSources = mutable.ListBuffer.empty[IotHubPartitionSource]
 
@@ -28,6 +30,8 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
       for (partitionSource <- this.partitionSources) {
         logger.debug(s"Polling for data in partition ${partitionSource.partition}")
         val sourceRecordsList = partitionSource.getRecords
+        logger.info(s"${eventHubName}:${partitionSource.partition} - Polling for data - " +
+          s"Obtained ${sourceRecordsList.length} SourceRecords")
         list ++= sourceRecordsList
       }
     } catch {
@@ -36,7 +40,6 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
         logger.error(errorMsg)
         throw new ConnectException("Error while polling for data", e)
     }
-    logger.info(s"Polling for data - Obtained ${list.length} SourceRecords from IotHub")
     list.asJava
   }
 
@@ -55,7 +58,7 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
     val topic = props.get(IotHubSourceConfig.KafkaTopic)
     val batchSize = props.get(IotHubSourceConfig.BatchSize).toInt
     val startTime = getStartTime(props.get(IotHubSourceConfig.IotHubStartTime))
-    val eventHubName = props.get(IotHubSourceConfig.EventHubCompatibleName)
+    eventHubName = props.get(IotHubSourceConfig.EventHubCompatibleName)
 
     val offsetStorageReader: OffsetStorageReader = if (this.context != null) {
       this.context.offsetStorageReader()
