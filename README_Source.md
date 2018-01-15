@@ -28,6 +28,7 @@ Here are the configurable values -
 | IotHub.StartTime | String | No | (Unused if not supplied) | The time from which to start retrieving messages from IoT Hub. The value should be in UTC and in the format yyyy-mm-ddThh:mm:ssZ. This setting is mutually exclusive with IotHub.Offsets. |
 | IotHub.Offsets | String | No | (Unused if not supplied) | The offsets for each IoT Hub partition from which to start retrieving messages from IoTHub, as a comma separated string. For example, for 4 partitions, the value would be something like "abc,lmn,pqr,xyz". This setting is mutually exclusive with IotHub.StartTime. |
 | BatchSize | Int | No | 100 | The size of each batch for retrieving entries from IoT Hub. |
+| RequestTimeout | Int | No | 60 | The max duration in seconds to spend receiving entries from IoT Hub. |
 
 > Note: If IotHub.StartTime is specified, then the value for IotHub.Offsets is ignored.
 > If neither IotHub.StartTime not IotHub.Offsets are specified, then the messages are retrieved from the IoT Hub from
@@ -49,6 +50,7 @@ IotHub.Partitions=4
 IotHub.StartTime=2016-11-28T00:00:00Z
 IotHub.Offsets=
 BatchSize=100
+RequestTimeout=60
 ```
 
 ### Building and running
