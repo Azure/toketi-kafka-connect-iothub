@@ -8,8 +8,6 @@ version := iotHubKafkaConnectVersion
 
 scalaVersion := "2.11.8"
 
-//conflictManager := ConflictManager.strict
-
 scalacOptions ++= Seq("-deprecation", "-explaintypes", "-unchecked", "-feature")
 
 libraryDependencies ++= {
