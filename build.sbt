@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 
-val iotHubKafkaConnectVersion = "0.6"
+val iotHubKafkaConnectVersion = "0.7"
 
 name := "kafka-connect-iothub"
 organization := "com.microsoft.azure.iot"
@@ -12,13 +12,13 @@ scalacOptions ++= Seq("-deprecation", "-explaintypes", "-unchecked", "-feature")
 
 libraryDependencies ++= {
 
-  val kafkaVersion = "0.10.2.1"
+  val kafkaVersion = "1.0.0"
   val azureEventHubSDKVersion = "0.14.0"
   val scalaLoggingVersion = "3.5.0"
   val logbackClassicVersion = "1.1.7"
   val scalaTestVersion = "3.0.0"
   val configVersion = "1.3.1"
-  val json4sVersion = "3.5.0"
+  val json4sVersion = "3.6.0-M2"
   val iotHubServiceClientVersion = "1.4.22"
 
   Seq(
