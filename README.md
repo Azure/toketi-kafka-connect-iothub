@@ -1,5 +1,6 @@
 # Kafka Connect Azure IoT Hub
 ________________________
+[![Build Status](https://travis-ci.org/azure/toketi-kafka-connect-iothub.svg?branch=master)](https://travis-ci.org/azure/toketi-kafka-connect-iothub)
 
 Kafka Connect Azure IoT Hub consists of 2 connectors - a source connector and a sink connector. The source connector
 is used to pump data from [Azure IoT Hub](https://azure.microsoft.com/en-us/services/iot-hub/) to
