@@ -23,16 +23,17 @@ class IotHubPartitionSource(val dataReceiver: DataReceiver,
 
   def getRecords: List[SourceRecord] = {
 
-    logger.debug(s"Polling for data from Partition $partition")
+    logger.debug(s"Polling for data from eventHub $eventHubName partition $partition")
     val list = ListBuffer.empty[SourceRecord]
     try {
       val messages: Iterable[IotMessage] = this.dataReceiver.receiveData(batchSize)
 
       if (messages.isEmpty) {
-        logger.debug(s"Finished processing all messages from partition ${this.partition}")
+        logger.debug(s"Finished processing all messages from eventHub $eventHubName " +
+          s"partition ${this.partition}")
       } else {
-        logger.debug(s"Received ${messages.size} messages from partition ${this.partition} " +
-          s"(requested $batchSize batch)")
+        logger.debug(s"Received ${messages.size} messages from eventHub $eventHubName " +
+          s"partition ${this.partition} (requested $batchSize batch)")
 
         for (msg: IotMessage <- messages) {
 
@@ -46,8 +47,8 @@ class IotHubPartitionSource(val dataReceiver: DataReceiver,
       }
     } catch {
       case NonFatal(e) =>
-        val errorMsg = s"Error while getting SourceRecords for partition ${this.partition}. " +
-          s"Exception - ${e.toString} Stack trace - ${e.printStackTrace()}"
+        val errorMsg = s"Error while getting SourceRecords for eventHub $eventHubName " +
+          s"partition $partition. Exception - ${e.toString} Stack trace - ${e.printStackTrace()}"
         logger.error(errorMsg)
         throw new ConnectException(errorMsg, e)
     }
