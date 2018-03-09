@@ -15,3 +15,7 @@ deploy:
     branch: master
     scala: '2.11.11'
     tags: true
+notifications:
+  email:
+    on_success: never
+    on_failure: always
