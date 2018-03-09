@@ -30,8 +30,8 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
       for (partitionSource <- this.partitionSources) {
         logger.debug(s"Polling for data in partition ${partitionSource.partition}")
         val sourceRecordsList = partitionSource.getRecords
-        logger.info(s"${eventHubName}:${partitionSource.partition} - Polling for data - " +
-          s"Obtained ${sourceRecordsList.length} SourceRecords")
+        logger.info(s"Polling for data - Obtained ${sourceRecordsList.length} SourceRecords " +
+          s"from ${eventHubName}:${partitionSource.partition}")
         list ++= sourceRecordsList
       }
     } catch {
