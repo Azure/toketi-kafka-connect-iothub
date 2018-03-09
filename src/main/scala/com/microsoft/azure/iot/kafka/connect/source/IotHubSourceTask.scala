@@ -17,8 +17,6 @@ import scala.util.control.NonFatal
 
 class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerialization {
 
-  private var eventHubName = ""
-
   // Public for testing
   val partitionSources = mutable.ListBuffer.empty[IotHubPartitionSource]
 
@@ -31,7 +29,7 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
         logger.debug(s"Polling for data in partition ${partitionSource.partition}")
         val sourceRecordsList = partitionSource.getRecords
         logger.info(s"Polling for data - Obtained ${sourceRecordsList.length} SourceRecords " +
-          s"from ${eventHubName}:${partitionSource.partition}")
+          s"from ${partitionSource.eventHubName}:${partitionSource.partition}")
         list ++= sourceRecordsList
       }
     } catch {
@@ -58,7 +56,7 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
     val topic = props.get(IotHubSourceConfig.KafkaTopic)
     val batchSize = props.get(IotHubSourceConfig.BatchSize).toInt
     val startTime = getStartTime(props.get(IotHubSourceConfig.IotHubStartTime))
-    eventHubName = props.get(IotHubSourceConfig.EventHubCompatibleName)
+    val eventHubName = props.get(IotHubSourceConfig.EventHubCompatibleName)
 
     val offsetStorageReader: OffsetStorageReader = if (this.context != null) {
       this.context.offsetStorageReader()
@@ -86,7 +84,8 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
 
       val dataReceiver = getDataReceiver(connectionString, receiverConsumerGroup, partition,
         partitionOffset, partitionStartTime)
-      val partitionSource = new IotHubPartitionSource(dataReceiver, partition, topic, batchSize, sourcePartition)
+      val partitionSource = new IotHubPartitionSource(dataReceiver, partition, topic, batchSize,
+        eventHubName, sourcePartition)
       this.partitionSources += partitionSource
     }
   }

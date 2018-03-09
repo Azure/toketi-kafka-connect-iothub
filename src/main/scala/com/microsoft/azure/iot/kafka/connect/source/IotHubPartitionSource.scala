@@ -16,6 +16,7 @@ class IotHubPartitionSource(val dataReceiver: DataReceiver,
     val partition: String,
     val topic: String,
     val batchSize: Int,
+    val eventHubName: String,
     val sourcePartition: Map[String, String])
   extends LazyLogging
     with JsonSerialization {
