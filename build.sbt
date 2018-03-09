@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft. All rights reserved.
 
-val iotHubKafkaConnectVersion = "0.6"
+val iotHubKafkaConnectVersion = util.Properties.propOrNone("version").getOrElse("0.6")
 
 name := "kafka-connect-iothub"
 organization := "com.microsoft.azure.iot"
 version := iotHubKafkaConnectVersion
 
-scalaVersion := "2.11.8"
+scalaVersion := util.Properties.propOrNone("scalaVersion").getOrElse("2.11.8")
 
 scalacOptions ++= Seq("-deprecation", "-explaintypes", "-unchecked", "-feature")
 

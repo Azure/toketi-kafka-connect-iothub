@@ -1,0 +1,19 @@
+language: scala
+scala:
+   - 2.9.3
+   - 2.10.6
+   - 2.11.11
+   - 2.12.2
+script:
+  - sbt -DscalaVersion=$TRAVIS_SCALA_VERSION assembly
+deploy:
+  provider: releases
+  api_key:
+    secure: YOUR_API_KEY_ENCRYPTED
+  file_glob: true
+  file: target/scala-*/kafka-connect-iothub-assembly_*.jar
+  skip_cleanup: true
+  on:
+    branch: master
+    scala: '2.11.11'
+    tags: true
