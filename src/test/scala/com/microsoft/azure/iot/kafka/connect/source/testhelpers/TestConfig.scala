@@ -13,6 +13,7 @@ object TestConfig {
   lazy val sourceTaskTestProps: util.Map[String, String] = {
     val props = new util.HashMap[String, String]()
     props.put(IotHubSourceConfig.EventHubCompatibleConnectionString, connStr.toString)
+    props.put(IotHubSourceConfig.EventHubCompatibleName, iotHubName)
     props.put(IotHubSourceConfig.IotHubConsumerGroup, "$Default")
     props.put(IotHubSourceConfig.TaskPartitionOffsetsMap, """{"0":"5","2":"10","3":"-1"}""")
     props.put(IotHubSourceConfig.KafkaTopic, "test")
@@ -24,6 +25,7 @@ object TestConfig {
   lazy val sourceTaskTestPropsStartTime: util.Map[String, String] = {
     val props = new util.HashMap[String, String]()
     props.put(IotHubSourceConfig.EventHubCompatibleConnectionString, connStr.toString)
+    props.put(IotHubSourceConfig.EventHubCompatibleName, iotHubName)
     props.put(IotHubSourceConfig.IotHubConsumerGroup, "$Default")
     props.put(IotHubSourceConfig.TaskPartitionOffsetsMap, """{"0":"5","2":"10","3":"-1"}""")
     props.put(IotHubSourceConfig.IotHubStartTime, "2016-12-10T00:00:00Z")
@@ -36,6 +38,7 @@ object TestConfig {
   lazy val sourceSingleTaskTestProps: util.Map[String, String] = {
     val props = new util.HashMap[String, String]()
     props.put(IotHubSourceConfig.EventHubCompatibleConnectionString, connStr.toString)
+    props.put(IotHubSourceConfig.EventHubCompatibleName, iotHubName)
     props.put(IotHubSourceConfig.IotHubConsumerGroup, "$Default")
     props.put(IotHubSourceConfig.TaskPartitionOffsetsMap, """{"0":"-1"}""")
     props.put(IotHubSourceConfig.KafkaTopic, "test")

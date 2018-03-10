@@ -28,6 +28,8 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
       for (partitionSource <- this.partitionSources) {
         logger.debug(s"Polling for data in partition ${partitionSource.partition}")
         val sourceRecordsList = partitionSource.getRecords
+        logger.info(s"Polling for data - Obtained ${sourceRecordsList.length} SourceRecords " +
+          s"from ${partitionSource.eventHubName}:${partitionSource.partition}")
         list ++= sourceRecordsList
       }
     } catch {
@@ -36,7 +38,6 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
         logger.error(errorMsg)
         throw new ConnectException("Error while polling for data", e)
     }
-    logger.info(s"Polling for data - Obtained ${list.length} SourceRecords from IotHub")
     list.asJava
   }
 
@@ -82,9 +83,10 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
         logger.info(s"Setting up partition receiver $partition with offset ${partitionOffset.get}")
       }
 
-      val dataReceiver = getDataReceiver(connectionString, receiverConsumerGroup, partition, partitionOffset,
-        partitionStartTime, receiveTimeout)
-      val partitionSource = new IotHubPartitionSource(dataReceiver, partition, topic, batchSize, sourcePartition)
+      val dataReceiver = getDataReceiver(connectionString, receiverConsumerGroup, partition,
+        partitionOffset, partitionStartTime, receiveTimeout)
+      val partitionSource = new IotHubPartitionSource(dataReceiver, partition, topic, batchSize,
+        eventHubName, sourcePartition)
       this.partitionSources += partitionSource
     }
   }
