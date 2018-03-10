@@ -2,7 +2,7 @@
 
 package com.microsoft.azure.iot.kafka.connect.source
 
-import java.time.Instant
+import java.time.{Duration, Instant}
 
 import com.microsoft.azure.eventhubs.{EventHubClient, PartitionReceiver}
 
@@ -10,7 +10,7 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 
 class EventHubReceiver(val connectionString: String, val receiverConsumerGroup: String, val partition: String,
-    var offset: Option[String], val startTime: Option[Instant]) extends DataReceiver {
+    var offset: Option[String], val startTime: Option[Instant], val receiveTimeout: Duration) extends DataReceiver {
 
   private[this] var isClosing = false
 
@@ -27,6 +27,7 @@ class EventHubReceiver(val connectionString: String, val receiverConsumerGroup: 
   if (this.eventHubReceiver == null) {
     throw new IllegalArgumentException("Unable to create PartitionReceiver from the input parameters.")
   }
+  this.eventHubReceiver.setReceiveTimeout(receiveTimeout)
 
   override def close(): Unit = {
     if (this.eventHubReceiver != null) {
