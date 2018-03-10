@@ -18,6 +18,7 @@ object TestConfig {
     props.put(IotHubSourceConfig.TaskPartitionOffsetsMap, """{"0":"5","2":"10","3":"-1"}""")
     props.put(IotHubSourceConfig.KafkaTopic, "test")
     props.put(IotHubSourceConfig.BatchSize, "5")
+    props.put(IotHubSourceConfig.ReceiveTimeout, "5")
     props
   }
 
@@ -30,6 +31,7 @@ object TestConfig {
     props.put(IotHubSourceConfig.IotHubStartTime, "2016-12-10T00:00:00Z")
     props.put(IotHubSourceConfig.KafkaTopic, "test")
     props.put(IotHubSourceConfig.BatchSize, "5")
+    props.put(IotHubSourceConfig.ReceiveTimeout, "5")
     props
   }
 
@@ -41,6 +43,7 @@ object TestConfig {
     props.put(IotHubSourceConfig.TaskPartitionOffsetsMap, """{"0":"-1"}""")
     props.put(IotHubSourceConfig.KafkaTopic, "test")
     props.put(IotHubSourceConfig.BatchSize, "5")
+    props.put(IotHubSourceConfig.ReceiveTimeout, "5")
     props
   }
 
@@ -52,6 +55,7 @@ object TestConfig {
     props.put(IotHubSourceConfig.IotHubAccessKeyValue, iotHubKeyValue)
     props.put(IotHubSourceConfig.IotHubPartitions, iotHubPartitions.toString)
     props.put(IotHubSourceConfig.KafkaTopic, "test")
+    props.put(IotHubSourceConfig.ReceiveTimeout, "45")
     props.put(IotHubSourceConfig.IotHubOffset, "-1,5,10,15,-1")
     props
   }

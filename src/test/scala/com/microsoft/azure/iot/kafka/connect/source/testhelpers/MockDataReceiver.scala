@@ -13,7 +13,8 @@ import scala.collection.mutable
 import scala.util.Random
 
 class MockDataReceiver(val connectionString: String, val receiverConsumerGroup: String, val partition: String,
-    var offset: Option[String], val startTime: Option[Instant]) extends DataReceiver with JsonSerialization {
+    var offset: Option[String], val startTime: Option[Instant], val receiveTimeout: Duration
+    ) extends DataReceiver with JsonSerialization {
 
   private val random: Random = new Random
 

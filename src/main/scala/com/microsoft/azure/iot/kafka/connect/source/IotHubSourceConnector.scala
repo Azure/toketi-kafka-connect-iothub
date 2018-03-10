@@ -92,6 +92,7 @@ class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSe
       IotHubSourceConfig.EventHubCompatibleConnectionString -> iotHubConnectionString,
       IotHubSourceConfig.IotHubOffset -> iotHubSourceConfig.getString(IotHubSourceConfig.IotHubOffset),
       IotHubSourceConfig.BatchSize -> iotHubSourceConfig.getInt(IotHubSourceConfig.BatchSize).toString,
+      IotHubSourceConfig.ReceiveTimeout -> iotHubSourceConfig.getInt(IotHubSourceConfig.ReceiveTimeout).toString,
       IotHubSourceConfig.KafkaTopic -> iotHubSourceConfig.getString(IotHubSourceConfig.KafkaTopic),
       IotHubSourceConfig.IotHubConsumerGroup -> iotHubSourceConfig.getString(IotHubSourceConfig.IotHubConsumerGroup),
       IotHubSourceConfig.IotHubPartitions -> iotHubSourceConfig.getInt(IotHubSourceConfig.IotHubPartitions).toString,

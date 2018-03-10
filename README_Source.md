@@ -23,11 +23,12 @@ Here are the configurable values -
 | IotHub.EventHubCompatibleEndpoint | String | Yes |  | The EventHub compatible endpoint for the IoT Hub. In the Azure Portal, you can find the value under "IoT Hub" >> your hub >> "Endpoints" >> "Events" >> "Event Hub-compatible endpoint". |
 | IotHub.AccessKeyName | String | Yes |  | The access key name for the IoT Hub. In the Azure Portal, you can find the value under "IoT Hub" >> your hub >> "Shared access policies". You can use the predefined value "service". |
 | IotHub.AccessKeyValue | String | Yes |  | The access key for the IoT Hub. In the Azure Portal, you can find the value under "IoT Hub" >> your hub >> "Shared access policies" >> key name >> "Primary key" |
-| IotHub.ConsumerGroup | String | Yes |  | The access key for the IoT Hub. In the Azure Portal, you can find the value under "IoT Hub" >> your hub > "Endpoints" >> "Events" >> Consumer groups. You can use the $Default group or create a new one (recommended) |
-| IotHub.Partitions | String | Yes |  | The access key for the IoT Hub. In the Azure Portal, navigate to "IoT Hub" >> your hub >> "Endpoints" >> "Events" >> "Partitions". |
+| IotHub.ConsumerGroup | String | Yes |  | The Consumer Group for the IoT Hub. In the Azure Portal, you can find the value under "IoT Hub" >> your hub > "Endpoints" >> "Events" >> Consumer groups. You can use the $Default group or create a new one (recommended) |
+| IotHub.Partitions | String | Yes |  | The partition count for the IoT Hub. In the Azure Portal, navigate to "IoT Hub" >> your hub >> "Endpoints" >> "Events" >> "Partitions". |
 | IotHub.StartTime | String | No | (Unused if not supplied) | The time from which to start retrieving messages from IoT Hub. The value should be in UTC and in the format yyyy-mm-ddThh:mm:ssZ. This setting is mutually exclusive with IotHub.Offsets. |
 | IotHub.Offsets | String | No | (Unused if not supplied) | The offsets for each IoT Hub partition from which to start retrieving messages from IoTHub, as a comma separated string. For example, for 4 partitions, the value would be something like "abc,lmn,pqr,xyz". This setting is mutually exclusive with IotHub.StartTime. |
-| BatchSize | Int | No | 100 | The size of each batch for retrieving entries from IoT Hub. |
+| BatchSize | Int | No | 100 | The size of each batch for retrieving messages from IoT Hub. |
+| ReceiveTimeout | Int | No | 60 | The max duration in seconds to wait for a full batch when retrieving messages from IoT Hub. |
 
 > Note: If IotHub.StartTime is specified, then the value for IotHub.Offsets is ignored.
 > If neither IotHub.StartTime not IotHub.Offsets are specified, then the messages are retrieved from the IoT Hub from
@@ -49,6 +50,7 @@ IotHub.Partitions=4
 IotHub.StartTime=2016-11-28T00:00:00Z
 IotHub.Offsets=
 BatchSize=100
+ReceiveTimeout=60
 ```
 
 ### Building and running

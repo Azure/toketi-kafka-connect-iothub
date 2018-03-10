@@ -11,6 +11,7 @@ import java.util.Map
 object IotHubSourceConfig {
 
   private val defaultBatchSize = 100
+  private val defaultReceiveTimeout = 60
   private val iotConfigGroup   = "Azure IoT Hub"
   private val kafkaConfig      = "Kafka"
 
@@ -36,6 +37,8 @@ object IotHubSourceConfig {
   val KafkaTopicDoc                      = "Kafka topic to copy data to"
   val BatchSize                          = "BatchSize"
   val BatchSizeDoc                       = "The batch size for fetching records from IoT Hub"
+  val ReceiveTimeout                     = "ReceiveTimeout"
+  val ReceiveTimeoutDoc                  = "Max time to spend receiving messages from IoT Hub"
   val IotHubOffset                       = "IotHub.Offsets"
   val IotHubOffsetDoc                    =
     "Offset for each partition in IotHub, as a comma separated string. This value is ignored if IotHubStartTime is specified."
@@ -63,7 +66,9 @@ object IotHubSourceConfig {
       "Per partition offsets")
     .define(BatchSize, Type.INT, defaultBatchSize, Importance.MEDIUM, IotHubOffsetDoc, iotConfigGroup, 9, Width.SHORT,
       "Batch size")
-    .define(KafkaTopic, Type.STRING, Importance.HIGH, KafkaTopicDoc, kafkaConfig, 10, Width.MEDIUM, "Kafka topic")
+    .define(ReceiveTimeout, Type.INT, defaultReceiveTimeout, Importance.MEDIUM, ReceiveTimeoutDoc, iotConfigGroup, 10,
+      Width.SHORT, "Receive Timeout")
+    .define(KafkaTopic, Type.STRING, Importance.HIGH, KafkaTopicDoc, kafkaConfig, 11, Width.MEDIUM, "Kafka topic")
 
   def getConfig(configValues: Map[String, String]): IotHubSourceConfig = {
     new IotHubSourceConfig(configDef, configValues)
