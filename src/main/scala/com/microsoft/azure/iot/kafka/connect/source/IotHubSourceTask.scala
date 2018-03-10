@@ -2,7 +2,7 @@
 
 package com.microsoft.azure.iot.kafka.connect.source
 
-import java.time.Instant
+import java.time.{Duration, Instant}
 import java.util
 
 import com.typesafe.scalalogging.LazyLogging
@@ -56,6 +56,7 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
     val batchSize = props.get(IotHubSourceConfig.BatchSize).toInt
     val startTime = getStartTime(props.get(IotHubSourceConfig.IotHubStartTime))
     val eventHubName = props.get(IotHubSourceConfig.EventHubCompatibleName)
+    val receiveTimeout = Duration.ofSeconds(props.get(IotHubSourceConfig.ReceiveTimeout).toInt)
 
     val offsetStorageReader: OffsetStorageReader = if (this.context != null) {
       this.context.offsetStorageReader()
@@ -81,18 +82,17 @@ class IotHubSourceTask extends SourceTask with LazyLogging with JsonSerializatio
         logger.info(s"Setting up partition receiver $partition with offset ${partitionOffset.get}")
       }
 
-      val dataReceiver = getDataReceiver(connectionString, receiverConsumerGroup, partition,
-        partitionOffset, partitionStartTime)
+      val dataReceiver = getDataReceiver(connectionString, receiverConsumerGroup, partition, partitionOffset,
+        partitionStartTime, receiveTimeout)
       val partitionSource = new IotHubPartitionSource(dataReceiver, partition, topic, batchSize, sourcePartition)
       this.partitionSources += partitionSource
     }
   }
 
-  protected def getDataReceiver(connectionString: String, receiverConsumerGroup: String,
-      partition: String, partitionOffset: Option[String],
-      partitionStartTime: Option[Instant]): DataReceiver = {
+  protected def getDataReceiver(connectionString: String, receiverConsumerGroup: String, partition: String,
+      partitionOffset: Option[String], partitionStartTime: Option[Instant], receiveTimeout: Duration): DataReceiver = {
     new EventHubReceiver(connectionString, receiverConsumerGroup,
-      partition, partitionOffset, partitionStartTime)
+      partition, partitionOffset, partitionStartTime, receiveTimeout)
   }
 
   private def getStartTime(startTimeString: String): Option[Instant] = {

@@ -28,10 +28,12 @@ class IotHubSourceConnectorTest extends FlatSpec with GivenWhenThen with JsonSer
       assert(taskConfig.containsKey(IotHubSourceConfig.IotHubConsumerGroup))
       assert(taskConfig.containsKey(IotHubSourceConfig.KafkaTopic))
       assert(taskConfig.containsKey(IotHubSourceConfig.BatchSize))
+      assert(taskConfig.containsKey(IotHubSourceConfig.ReceiveTimeout))
       assert(taskConfig.containsKey(IotHubSourceConfig.TaskPartitionOffsetsMap))
 
       assert(taskConfig.get(IotHubSourceConfig.EventHubCompatibleConnectionString) != "")
       assert(taskConfig.get(IotHubSourceConfig.BatchSize) == "100")
+      assert(taskConfig.get(IotHubSourceConfig.ReceiveTimeout) == "45")
       assert(taskConfig.get(IotHubSourceConfig.IotHubOffset) == "-1,5,10,15,-1")
     }
 
@@ -70,10 +72,12 @@ class IotHubSourceConnectorTest extends FlatSpec with GivenWhenThen with JsonSer
       assert(taskConfig.containsKey(IotHubSourceConfig.IotHubConsumerGroup))
       assert(taskConfig.containsKey(IotHubSourceConfig.KafkaTopic))
       assert(taskConfig.containsKey(IotHubSourceConfig.BatchSize))
+      assert(taskConfig.containsKey(IotHubSourceConfig.ReceiveTimeout))
       assert(taskConfig.containsKey(IotHubSourceConfig.TaskPartitionOffsetsMap))
 
       assert(taskConfig.get(IotHubSourceConfig.EventHubCompatibleConnectionString) != "")
       assert(taskConfig.get(IotHubSourceConfig.BatchSize) == "100")
+      assert(taskConfig.get(IotHubSourceConfig.ReceiveTimeout) == "60")
       assert(taskConfig.get(IotHubSourceConfig.IotHubOffset) == "")
       assert(taskConfig.get(IotHubSourceConfig.IotHubStartTime) == "2016-12-10T00:00:00Z")
     }
