@@ -4,8 +4,7 @@ package com.microsoft.azure.iot.kafka.connect.source
 
 import java.util
 
-import com.microsoft.azure.eventhubs.PartitionReceiver
-import com.microsoft.azure.servicebus.ConnectionStringBuilder
+import com.microsoft.azure.eventhubs.ConnectionStringBuilder
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.common.config.{ConfigDef, ConfigException}
 import org.apache.kafka.connect.connector.Task
@@ -18,6 +17,7 @@ import scala.collection.mutable
 
 class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSerialization {
 
+  var START_OF_STREAM = "-1"
   private[this] var props: Map[String, String] = _
 
   override def taskClass(): Class[_ <: Task] = classOf[IotHubSourceTask]
@@ -44,7 +44,7 @@ class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSe
           offsets(partition)
         }
         else {
-          PartitionReceiver.START_OF_STREAM
+          this.START_OF_STREAM
         }
         partitionOffsetsMap += (partition.toString -> partitionOffset)
         partition = partition + maxTasks
@@ -82,12 +82,11 @@ class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSe
     val iotHubSourceConfig = iotHubSourceConfigOption.get
     val eventHubCompatibleNamespace = IotHubSourceConfig.getEventHubCompatibleNamespace(
       iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleEndpoint))
-    val iotHubConnectionString = new ConnectionStringBuilder(
-      eventHubCompatibleNamespace,
-      iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleName),
-      iotHubSourceConfig.getString(IotHubSourceConfig.IotHubAccessKeyName),
-      iotHubSourceConfig.getString(IotHubSourceConfig.IotHubAccessKeyValue)).toString
-
+    val iotHubConnectionString = new ConnectionStringBuilder()
+      .setNamespaceName(eventHubCompatibleNamespace)
+      .setEventHubName(IotHubSourceConfig.EventHubCompatibleName)
+      .setSasKeyName(IotHubSourceConfig.IotHubAccessKeyName)
+      .setSasKey(IotHubSourceConfig.IotHubAccessKeyValue).toString
     this.props = Map[String, String](
       IotHubSourceConfig.EventHubCompatibleConnectionString -> iotHubConnectionString,
       IotHubSourceConfig.IotHubOffset -> iotHubSourceConfig.getString(IotHubSourceConfig.IotHubOffset),
