@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 
-val iotHubKafkaConnectVersion = "0.6.2"
+val iotHubKafkaConnectVersion = "0.6.3"
 
 name := "kafka-connect-iothub"
 organization := "com.microsoft.azure.iot"
