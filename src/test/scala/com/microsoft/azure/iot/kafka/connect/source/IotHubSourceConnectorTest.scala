@@ -104,4 +104,22 @@ class IotHubSourceConnectorTest extends FlatSpec with GivenWhenThen with JsonSer
       connector.start(inputProperties)
     }
   }
+
+  "IotHubSourceConnector" should "create a valid connection string" in {
+    Given("Valid set of input properties")
+    val inputProperties = TestConfig.sourceConnectorTestProps
+    val connector = new IotHubSourceConnector
+
+    When("Start and TaskConfig are called in right order")
+    connector.start(inputProperties)
+    val taskConfig = connector.taskConfigs(1).get(0)
+
+    Then("The TaskConfig has the expected connectionString")
+    val expected = String.format("Endpoint=%s;EntityPath=%s;SharedAccessKeyName=%s;SharedAccessKey=%s",
+      inputProperties.get(IotHubSourceConfig.EventHubCompatibleEndpoint),
+      inputProperties.get(IotHubSourceConfig.EventHubCompatibleName),
+      inputProperties.get(IotHubSourceConfig.IotHubAccessKeyName),
+      inputProperties.get(IotHubSourceConfig.IotHubAccessKeyValue))
+    assert(taskConfig.get(IotHubSourceConfig.EventHubCompatibleConnectionString) == expected)
+  }
 }

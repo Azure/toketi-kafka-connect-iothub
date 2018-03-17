@@ -2,6 +2,7 @@
 
 package com.microsoft.azure.iot.kafka.connect.source
 
+import java.net.URI
 import java.util
 
 import com.microsoft.azure.eventhubs.ConnectionStringBuilder
@@ -80,13 +81,11 @@ class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSe
     }
 
     val iotHubSourceConfig = iotHubSourceConfigOption.get
-    val eventHubCompatibleNamespace = IotHubSourceConfig.getEventHubCompatibleNamespace(
-      iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleEndpoint))
     val iotHubConnectionString = new ConnectionStringBuilder()
-      .setNamespaceName(eventHubCompatibleNamespace)
-      .setEventHubName(IotHubSourceConfig.EventHubCompatibleName)
-      .setSasKeyName(IotHubSourceConfig.IotHubAccessKeyName)
-      .setSasKey(IotHubSourceConfig.IotHubAccessKeyValue).toString
+      .setEndpoint(new URI(iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleEndpoint)))
+      .setEventHubName(iotHubSourceConfig.getString(IotHubSourceConfig.EventHubCompatibleName))
+      .setSasKeyName(iotHubSourceConfig.getString(IotHubSourceConfig.IotHubAccessKeyName))
+      .setSasKey(iotHubSourceConfig.getString(IotHubSourceConfig.IotHubAccessKeyValue)).toString
     this.props = Map[String, String](
       IotHubSourceConfig.EventHubCompatibleConnectionString -> iotHubConnectionString,
       IotHubSourceConfig.IotHubOffset -> iotHubSourceConfig.getString(IotHubSourceConfig.IotHubOffset),
