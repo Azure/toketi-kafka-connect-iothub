@@ -6,6 +6,7 @@ import java.net.URI
 import java.util
 
 import com.microsoft.azure.eventhubs.ConnectionStringBuilder
+import com.microsoft.azure.eventhubs.impl.ClientConstants
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.common.config.{ConfigDef, ConfigException}
 import org.apache.kafka.connect.connector.Task
@@ -18,7 +19,6 @@ import scala.collection.mutable
 
 class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSerialization {
 
-  var START_OF_STREAM = "-1"
   private[this] var props: Map[String, String] = _
 
   override def taskClass(): Class[_ <: Task] = classOf[IotHubSourceTask]
@@ -45,7 +45,7 @@ class IotHubSourceConnector extends SourceConnector with LazyLogging with JsonSe
           offsets(partition)
         }
         else {
-          this.START_OF_STREAM
+          ClientConstants.START_OF_STREAM
         }
         partitionOffsetsMap += (partition.toString -> partitionOffset)
         partition = partition + maxTasks
