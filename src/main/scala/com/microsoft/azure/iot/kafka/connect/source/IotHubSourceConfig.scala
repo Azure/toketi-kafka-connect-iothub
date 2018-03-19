@@ -73,10 +73,6 @@ object IotHubSourceConfig {
   def getConfig(configValues: Map[String, String]): IotHubSourceConfig = {
     new IotHubSourceConfig(configDef, configValues)
   }
-
-  def getEventHubCompatibleNamespace(eventHubCompatibleEndpoint: String): String = {
-    eventHubCompatibleEndpoint.replaceFirst(".*://", "").replaceFirst("\\..*", "")
-  }
 }
 
 class IotHubSourceConfig(configDef: ConfigDef, configValues: Map[String, String])

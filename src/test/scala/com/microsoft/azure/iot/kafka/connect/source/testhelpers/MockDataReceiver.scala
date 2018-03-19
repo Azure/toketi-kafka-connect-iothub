@@ -5,8 +5,8 @@ package com.microsoft.azure.iot.kafka.connect.source.testhelpers
 import java.text.SimpleDateFormat
 import java.time.{Duration, Instant}
 
+import com.microsoft.azure.eventhubs.impl.AmqpConstants
 import com.microsoft.azure.iot.kafka.connect.source.{DataReceiver, IotMessage, JsonSerialization}
-import com.microsoft.azure.servicebus.amqp.AmqpConstants
 import org.json4s.jackson.Serialization.write
 
 import scala.collection.mutable

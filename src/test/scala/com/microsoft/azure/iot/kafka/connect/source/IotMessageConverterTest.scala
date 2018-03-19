@@ -5,8 +5,8 @@ package com.microsoft.azure.iot.kafka.connect.source
 import java.text.SimpleDateFormat
 import java.time.Instant
 
+import com.microsoft.azure.eventhubs.impl.AmqpConstants
 import com.microsoft.azure.iot.kafka.connect.source.testhelpers.DeviceTemperature
-import com.microsoft.azure.servicebus.amqp.AmqpConstants
 import org.apache.kafka.connect.data.Struct
 import org.json4s.jackson.Serialization._
 import org.scalatest.{FlatSpec, GivenWhenThen}

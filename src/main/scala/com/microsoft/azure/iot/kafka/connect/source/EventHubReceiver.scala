@@ -3,8 +3,9 @@
 package com.microsoft.azure.iot.kafka.connect.source
 
 import java.time.{Duration, Instant}
+import java.util.concurrent.Executors
 
-import com.microsoft.azure.eventhubs.{EventHubClient, PartitionReceiver}
+import com.microsoft.azure.eventhubs.{EventHubClient, EventPosition, PartitionReceiver}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
@@ -14,16 +15,19 @@ class EventHubReceiver(val connectionString: String, val receiverConsumerGroup: 
 
   private[this] var isClosing = false
 
-  private val eventHubClient = EventHubClient.createFromConnectionStringSync(connectionString)
+  private val executorService = Executors.newSingleThreadExecutor()
+  private val eventHubClient = EventHubClient.createSync(connectionString, executorService)
   if (eventHubClient == null) {
     throw new IllegalArgumentException("Unable to create EventHubClient from the input parameters.")
   }
 
-  private val eventHubReceiver: PartitionReceiver = if (startTime.isDefined) {
-    eventHubClient.createReceiverSync(receiverConsumerGroup, partition.toString, startTime.get)
-  } else {
-    eventHubClient.createReceiverSync(receiverConsumerGroup, partition.toString, offset.get)
+  private val eventPosition = if (startTime.isDefined) {
+    EventPosition.fromEnqueuedTime(startTime.get)
+  }  else {
+    EventPosition.fromOffset(offset.get)
   }
+  private val eventHubReceiver: PartitionReceiver = eventHubClient.createReceiverSync(
+    receiverConsumerGroup, partition.toString, eventPosition)
   if (this.eventHubReceiver == null) {
     throw new IllegalArgumentException("Unable to create PartitionReceiver from the input parameters.")
   }
