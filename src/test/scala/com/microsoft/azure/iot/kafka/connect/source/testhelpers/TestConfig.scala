@@ -2,10 +2,11 @@
 
 package com.microsoft.azure.iot.kafka.connect.source.testhelpers
 
+import java.net.URI
 import java.util
 
+import com.microsoft.azure.eventhubs.ConnectionStringBuilder
 import com.microsoft.azure.iot.kafka.connect.source.IotHubSourceConfig
-import com.microsoft.azure.servicebus.ConnectionStringBuilder
 import com.typesafe.config.ConfigFactory
 
 object TestConfig {
@@ -88,5 +89,9 @@ object TestConfig {
   lazy private val iotHubKeyName    = iotHubConfig.getString("keyName")
   lazy private val iotHubKeyValue   = iotHubConfig.getString("key")
   lazy private val iotHubPartitions = iotHubConfig.getInt("partitions")
-  lazy private val connStr          = new ConnectionStringBuilder(iotHubEndpoint, iotHubName, iotHubKeyName, iotHubKeyValue)
+  lazy private val connStr          = new ConnectionStringBuilder()
+                                        .setEndpoint(new URI(iotHubEndpoint))
+                                        .setEventHubName(iotHubName)
+                                        .setSasKeyName(iotHubKeyName)
+                                        .setSasKey(iotHubKeyValue)
 }
