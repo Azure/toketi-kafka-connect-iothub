@@ -2,7 +2,7 @@
 
 package com.microsoft.azure.iot.kafka.connect.source
 
-import java.time.Instant
+import java.time.{Duration, Instant}
 import java.util
 
 import com.microsoft.azure.iot.kafka.connect.source.testhelpers.{DeviceTemperature, MockDataReceiver, TestConfig, TestIotHubSourceTask}
@@ -69,6 +69,7 @@ class IotHubSourceTaskTest extends FlatSpec with GivenWhenThen with JsonSerializ
       assert(dataReceiver.startTime.isEmpty)
       assert(dataReceiver.connectionString != "")
       assert(dataReceiver.receiverConsumerGroup != "")
+      assert(dataReceiver.receiveTimeout == Duration.ofSeconds(5))
     }
   }
 
