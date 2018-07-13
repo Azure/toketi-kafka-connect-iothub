@@ -1,13 +1,19 @@
+jdk: oraclejdk8
 language: scala
 scala:
 - 2.11.11
 - 2.12.2
+cache:
+  directories:
+  - "$HOME/.ivy2"
+  - "$HOME/.sbt"
+  - "$HOME/.m2"
 script:
 - sbt -DscalaVersion=$TRAVIS_SCALA_VERSION assembly
 deploy:
   provider: releases
   api_key:
-    secure: pH3qOqoZQYf6G7HMG9gPfaLGxElyi0HN0jlee+mdqGKU/xfULjNIah0gp3JlHdDqkfm+jOBMxjjICqtEwXtLnyd9YJ+W/ZyzS4hhIJadhh3Mcb/8UvZ+dAw3bsCQ70HAjfevwTPaE/kbbLuoeKWfO3MLjjEYX3Q4KVMegUw7PjSy2KleVI6t9KDYwqmTqpaes66k8U9hQx6mGBbwt761G9V8UOb9Eo1OqhG0OaoEjlo+5fd3e7fI41i4pRNAMgGBe27pjKBywUFZPHe089/7SyWxfrbdHei8iU3IEBVA8tAtzydHnq2C1rj7x42KkIkn7tH/g/zZYCTai0BwomWKLzaDf3x1ZueMpReCPpH/ILHiiDkfqzfmQ+YfQvDbvmsoWIXRCiLZeB9sc6ccEsK53q/Mqa2fdICUFtDeS7yUwovC0NZqJvnGgr2g20y/StR48XhScMjKDWOsHYmMcXQ/Fb0n9ZZPuay0t48WXhI5fqx9GJ6jY6FZJ1SpDwuZRQYaVKXr+Y9kHnMXWXMd2pJgew4XWZQW9XFdZsYBGGCb5eIpEnW3wmbPimCWKWfw3Mk5BNUnO9HsNmvOS01+isvX5eMHTxwIdH/CuFy75IocnA8of2ju4HG4cQaRMnDLc5n5/eUOTd+41ig13hEe9cv+jFTGhvk6BbQ6bGF6tvgr5Zk=
+    secure: $GITHUB_KEY
   file_glob: true
   file: target/scala-*/kafka-connect-iothub-assembly_*.jar
   skip_cleanup: true
