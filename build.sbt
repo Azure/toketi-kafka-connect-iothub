@@ -36,7 +36,7 @@ libraryDependencies ++= {
   ).map(_ exclude("javax.ws.rs", "javax.ws.rs-api"))
 }
 
-assemblyJarName in assembly := s"kafka-connect-iothub-assembly_2.11-$iotHubKafkaConnectVersion.jar"
+assemblyJarName in assembly := s"kafka-connect-iothub-assembly_2.13-$iotHubKafkaConnectVersion.jar"
 
 publishArtifact in Test := true
 publishArtifact in(Compile, packageDoc) := true
