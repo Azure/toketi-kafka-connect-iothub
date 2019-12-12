@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 
-val iotHubKafkaConnectVersion = "0.7.0"
+val iotHubKafkaConnectVersion = "0.8.0"
 
 name := "kafka-connect-iothub"
 organization := "com.microsoft.azure.iot"
@@ -53,7 +53,12 @@ publishMavenStyle := true
 // bintrayRepository := "toketi-repo"
 // bintrayPackage := "kafka-connect-iothub"
 // bintrayReleaseOnPublish in ThisBuild := true
-
+assemblyMergeStrategy in assembly := {
+  case "module-info.class" => MergeStrategy.discard
+  case x =>
+    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    oldStrategy(x)
+}
 // Required in Sonatype
 pomExtra :=
     <url>https://github.com/Azure/toketi-kafka-connect-iothub</url>
