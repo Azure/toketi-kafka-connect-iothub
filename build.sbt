@@ -13,7 +13,7 @@ scalacOptions ++= Seq("-deprecation", "-explaintypes", "-unchecked", "-feature",
 libraryDependencies ++= {
 
   val kafkaVersion = "2.4.1"
-  val azureEventHubSDKVersion = "3.0.2"
+  val azureEventHubSDKVersion = "1.3.0"
   val scalaLoggingVersion = "3.9.2"
   val logbackClassicVersion = "1.2.3"
   val scalaTestVersion = "3.1.1"
