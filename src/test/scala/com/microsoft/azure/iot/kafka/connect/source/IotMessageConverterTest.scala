@@ -9,12 +9,12 @@ import com.microsoft.azure.eventhubs.impl.AmqpConstants
 import com.microsoft.azure.iot.kafka.connect.source.testhelpers.DeviceTemperature
 import org.apache.kafka.connect.data.Struct
 import org.json4s.jackson.Serialization._
-import org.scalatest.{FlatSpec, GivenWhenThen}
+import org.scalatest.{flatspec, GivenWhenThen}
 
 import scala.collection.mutable
 import scala.util.Random
 
-class IotMessageConverterTest extends FlatSpec with GivenWhenThen with JsonSerialization {
+class IotMessageConverterTest extends flatspec.AnyFlatSpec with GivenWhenThen with JsonSerialization {
 
   private val random: Random = new Random
 
@@ -29,16 +29,16 @@ class IotMessageConverterTest extends FlatSpec with GivenWhenThen with JsonSeria
     val offset = random.nextString(10)
     val enqueuedDate = new SimpleDateFormat("MM/dd/yyyy").parse("12/01/2016")
     val systemProperties = mutable.Map[String, Object](
-      "iothub-connection-device-id" → "device10",
-      AmqpConstants.SEQUENCE_NUMBER_ANNOTATION_NAME → sequenceNumber.asInstanceOf[Object],
-      AmqpConstants.AMQP_PROPERTY_CORRELATION_ID → correlationId,
-      AmqpConstants.OFFSET_ANNOTATION_NAME → offset,
-      AmqpConstants.ENQUEUED_TIME_UTC_ANNOTATION_NAME → enqueuedDate)
+      "iothub-connection-device-id" -> "device10",
+      AmqpConstants.SEQUENCE_NUMBER_ANNOTATION_NAME -> sequenceNumber.asInstanceOf[Object],
+      AmqpConstants.AMQP_PROPERTY_CORRELATION_ID -> correlationId,
+      AmqpConstants.OFFSET_ANNOTATION_NAME -> offset,
+      AmqpConstants.ENQUEUED_TIME_UTC_ANNOTATION_NAME -> enqueuedDate)
 
     val timestamp = Instant.now().toString
     val messageProperties = mutable.Map[String, Object](
-      "timestamp" → timestamp,
-      "contentType" → "temperature"
+      "timestamp" -> timestamp,
+      "contentType" -> "temperature"
     )
 
     val iotMessage = IotMessage(deviceTempStr, systemProperties, messageProperties)

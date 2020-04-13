@@ -32,15 +32,15 @@ class MockDataReceiver(val connectionString: String, val receiverConsumerGroup: 
     val deviceTempStr = write(deviceTemp)
 
     val systemProperties = mutable.Map[String, Object](
-      "iothub-connection-device-id" → s"device$index",
-      AmqpConstants.SEQUENCE_NUMBER_ANNOTATION_NAME → index.toLong.asInstanceOf[Object],
-      AmqpConstants.AMQP_PROPERTY_CORRELATION_ID → random.nextString(10),
-      AmqpConstants.OFFSET_ANNOTATION_NAME → random.nextString(10),
-      AmqpConstants.ENQUEUED_TIME_UTC_ANNOTATION_NAME → new SimpleDateFormat("MM/dd/yyyy").parse("12/01/2016"))
+      "iothub-connection-device-id" -> s"device$index",
+      AmqpConstants.SEQUENCE_NUMBER_ANNOTATION_NAME -> index.toLong.asInstanceOf[Object],
+      AmqpConstants.AMQP_PROPERTY_CORRELATION_ID -> random.nextString(10),
+      AmqpConstants.OFFSET_ANNOTATION_NAME -> random.nextString(10),
+      AmqpConstants.ENQUEUED_TIME_UTC_ANNOTATION_NAME -> new SimpleDateFormat("MM/dd/yyyy").parse("12/01/2016"))
 
     val messageProperties = mutable.Map[String, Object](
-      "timestamp" → Instant.now().toString,
-      "contentType" → "temperature"
+      "timestamp" -> Instant.now().toString,
+      "contentType" -> "temperature"
     )
 
     val iotMessage = IotMessage(deviceTempStr, systemProperties, messageProperties)

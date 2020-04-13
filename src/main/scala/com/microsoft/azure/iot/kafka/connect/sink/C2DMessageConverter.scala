@@ -13,7 +13,7 @@ import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.sink.SinkRecord
 import org.json4s.jackson.Serialization._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object C2DMessageConverter extends JsonSerialization {
 
@@ -36,9 +36,9 @@ object C2DMessageConverter extends JsonSerialization {
   def validateSchemaAndGetMessage(record: SinkRecord): C2DMessage = {
     val schema = record.valueSchema()
     schema.`type`() match {
-      case Schema.Type.STRING ⇒ deserializeMessage(record, schema)
-      case Schema.Type.STRUCT ⇒ validateStructSchemaAndGetMessage(record, schema)
-      case schemaType ⇒ throw new ConnectException(s"Schema of Kafka record is of type ${schema.`type`().toString}, " +
+      case Schema.Type.STRING => deserializeMessage(record, schema)
+      case Schema.Type.STRUCT => validateStructSchemaAndGetMessage(record, schema)
+      case schemaType => throw new ConnectException(s"Schema of Kafka record is of type ${schema.`type`().toString}, " +
         s"while the supported schemas are 'struct' and 'string'")
     }
   }
@@ -50,7 +50,7 @@ object C2DMessageConverter extends JsonSerialization {
       val c2DMessage = read[C2DMessage](stringValue)
       c2DMessage
     } catch {
-      case e: Exception ⇒ throw new ConnectException(s"Unable to convert record with " +
+      case e: Exception => throw new ConnectException(s"Unable to convert record with " +
         s"schema ${schema.`type`().toString} and value ${record.value().toString} to C2D message"
       )
     }
@@ -64,7 +64,7 @@ object C2DMessageConverter extends JsonSerialization {
         s"schema of type ${expectedSchema.`type`().toString}")
     }
 
-    for (expectedField ← expectedSchema.fields().asScala) {
+    for (expectedField <- expectedSchema.fields().asScala) {
       val field = schema.field(expectedField.name())
       if (field != null) {
         val expectedFieldSchema = expectedField.schema()

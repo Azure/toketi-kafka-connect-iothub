@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 
-val iotHubKafkaConnectVersion = "0.8.0"
+val iotHubKafkaConnectVersion = "0.8.1"
 
 name := "kafka-connect-iothub"
 organization := "com.microsoft.azure.iot"
@@ -12,14 +12,16 @@ scalacOptions ++= Seq("-deprecation", "-explaintypes", "-unchecked", "-feature")
 
 libraryDependencies ++= {
 
-  val kafkaVersion = "2.3.0"
-  val azureEventHubSDKVersion = "3.0.2"
+  val kafkaVersion = "2.4.1"
+  val azureEventHubSDKVersion = "3.1.1"
   val scalaLoggingVersion = "3.9.2"
   val logbackClassicVersion = "1.2.3"
-  val scalaTestVersion = "3.1.0"
-  val configVersion = "1.3.1"
+  val scalaTestVersion = "3.1.1"
+  val configVersion = "1.4.0"
   val json4sVersion = "3.6.7"
-  val iotHubServiceClientVersion = "1.19.0"
+  val iotHubServiceClientVersion = "1.21.1"
+  val jakartaWsRsVersion = "2.1.6"
+
   Seq(
     "org.apache.kafka" % "connect-api" % kafkaVersion % "provided",
     "org.apache.kafka" % "connect-json" % kafkaVersion % "provided",
@@ -28,7 +30,7 @@ libraryDependencies ++= {
     "org.json4s" %% "json4s-jackson" % json4sVersion,
     "com.typesafe.scala-logging" %% "scala-logging" % scalaLoggingVersion,
     "com.microsoft.azure.sdk.iot" % "iot-service-client" % iotHubServiceClientVersion,
-    "jakarta.ws.rs" % "jakarta.ws.rs-api" % "2.1.6",
+    "jakarta.ws.rs" % "jakarta.ws.rs-api" % jakartaWsRsVersion,
 
     // Test dependencies
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test",

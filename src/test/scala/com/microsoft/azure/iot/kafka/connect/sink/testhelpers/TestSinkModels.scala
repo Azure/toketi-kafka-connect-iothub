@@ -13,9 +13,10 @@ import com.microsoft.azure.iot.kafka.connect.sink.C2DMessage
 import org.apache.kafka.connect.data.{Schema, SchemaBuilder, Struct}
 import org.apache.kafka.connect.sink.SinkRecord
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import org.json4s.jackson.Serialization._
 
+import scala.jdk.CollectionConverters._
 import scala.util.Random
 
 object TestSinkRecords extends JsonSerialization {
@@ -24,7 +25,7 @@ object TestSinkRecords extends JsonSerialization {
   private val topic     = "test"
 
   def getSinkSecords(): util.List[SinkRecord] = {
-    generateSinkRecords((i: Int) ⇒ {
+    generateSinkRecords((i: Int) => {
       val struct = new Struct(TestSchemas.validSchema)
         .put("deviceId", "device" + i)
         .put("message", "Turn off")
@@ -34,7 +35,7 @@ object TestSinkRecords extends JsonSerialization {
   }
 
   def getSinkRecordsWithMissingPropertySchema(): util.List[SinkRecord] = {
-    generateSinkRecords((i: Int) ⇒ {
+    generateSinkRecords((i: Int) => {
       val struct = new Struct(TestSchemas.missingFieldSchema)
         .put("deviceId", "device" + i)
         .put("message", "Turn off")
@@ -43,23 +44,23 @@ object TestSinkRecords extends JsonSerialization {
   }
 
   def getSinkRecordsWithInvalidSchema(): util.List[SinkRecord] = {
-    generateSinkRecords((i: Int) ⇒ {
+    generateSinkRecords((i: Int) => {
       (TestSchemas.invalidSchemaTypeSchema, "Foo")
     })
   }
 
   def getSinkRecordsWithStringSchema(): util.List[SinkRecord] = {
-    generateSinkRecords((i: Int) ⇒ {
+    generateSinkRecords((i: Int) => {
       val c2dMessage = C2DMessage(i.toString, "Turn Off", "messageId" + i.toString, Some(Date.from(Instant.now())))
       val value = write(c2dMessage)
       (TestSchemas.validStringSchema, value)
     })
   }
 
-  private def generateSinkRecords(f: (Int) ⇒ (Schema, Object)): util.List[SinkRecord] = {
+  private def generateSinkRecords(f: (Int) => (Schema, Object)): util.List[SinkRecord] = {
     val records = collection.mutable.ListBuffer.empty[SinkRecord]
     var offsetValue = 1
-    for (i ← 0 until batchSize) {
+    for (i <- 0 until batchSize) {
 
       val valueAndSchema: (Schema, Object) = f(i)
       val record = new SinkRecord(topic, Random.nextInt(10), Schema.OPTIONAL_STRING_SCHEMA, null, valueAndSchema._1,
@@ -72,7 +73,7 @@ object TestSinkRecords extends JsonSerialization {
   }
 
   def getSinkRecordsWithInvalidFieldTypeSchema(): util.List[SinkRecord] = {
-    generateSinkRecords((i: Int) ⇒ {
+    generateSinkRecords((i: Int) => {
       val struct = new Struct(TestSchemas.invalidFieldTypeSchema)
         .put("deviceId", "device" + i)
         .put("message", "Turn off")

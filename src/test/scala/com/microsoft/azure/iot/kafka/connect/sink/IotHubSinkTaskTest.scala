@@ -12,11 +12,11 @@ import com.microsoft.azure.sdk.iot.service.DeliveryAcknowledgement
 import org.apache.kafka.connect.data.Struct
 import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.sink.SinkRecord
-import org.scalatest.{FlatSpec, GivenWhenThen}
+import org.scalatest.{flatspec, GivenWhenThen}
 
 import scala.language.implicitConversions
 
-class IotHubSinkTaskTest extends FlatSpec with GivenWhenThen with JsonSerialization {
+class IotHubSinkTaskTest extends flatspec.AnyFlatSpec with GivenWhenThen with JsonSerialization {
 
   implicit def toJavaPredicate[A](f: Function1[A, Boolean]) = new Predicate[A] {
     override def test(a: A): Boolean = f(a)
@@ -45,8 +45,8 @@ class IotHubSinkTaskTest extends FlatSpec with GivenWhenThen with JsonSerializat
     val sentRecords = iotHubSinkTask.getSentMessages()
 
     assert(sentRecords.size == sinkRecords.size())
-    for (sentRecord ← sentRecords) {
-      val predicate = (r: SinkRecord) ⇒ r.value().asInstanceOf[Struct].getString("messageId") == sentRecord.getMessageId
+    for (sentRecord <- sentRecords) {
+      val predicate = (r: SinkRecord) => r.value().asInstanceOf[Struct].getString("messageId") == sentRecord.getMessageId
       val sinkRecord = sinkRecords.stream().filter(predicate).findAny()
       assert(sinkRecord != null && sinkRecord.isPresent)
     }
@@ -69,8 +69,8 @@ class IotHubSinkTaskTest extends FlatSpec with GivenWhenThen with JsonSerializat
     val sentRecords = iotHubSinkTask.getSentMessages()
 
     assert(sentRecords.size == sinkRecords.size())
-    for (sentRecord ← sentRecords) {
-      val predicate = (r: SinkRecord) ⇒ r.value().asInstanceOf[String].contains(sentRecord.getMessageId)
+    for (sentRecord <- sentRecords) {
+      val predicate = (r: SinkRecord) => r.value().asInstanceOf[String].contains(sentRecord.getMessageId)
       val sinkRecord = sinkRecords.stream().filter(predicate).findAny()
       assert(sinkRecord != null && sinkRecord.isPresent)
     }

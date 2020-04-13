@@ -13,7 +13,7 @@ import org.apache.kafka.connect.connector.Task
 import org.apache.kafka.connect.errors.ConnectException
 import org.apache.kafka.connect.sink.SinkConnector
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class IotHubSinkConnector extends SinkConnector with LazyLogging with JsonSerialization {
 
@@ -39,11 +39,11 @@ class IotHubSinkConnector extends SinkConnector with LazyLogging with JsonSerial
       val iotHubSinkConfig = IotHubSinkConfig.getConfig(props)
       this.props = Map[String, String](
         IotHubSinkConfig.IotHubConnectionString -> iotHubSinkConfig.getString(IotHubSinkConfig.IotHubConnectionString),
-        IotHubSinkConfig.IotHubMessageDeliveryAcknowledgement →
+        IotHubSinkConfig.IotHubMessageDeliveryAcknowledgement ->
           iotHubSinkConfig.getString(IotHubSinkConfig.IotHubMessageDeliveryAcknowledgement)
       )
     } catch {
-      case ex: ConfigException ⇒ throw new ConnectException("Could not start IotHubSinkConnector due to a " +
+      case ex: ConfigException => throw new ConnectException("Could not start IotHubSinkConnector due to a " +
         "configuration exception", ex)
     }
   }
