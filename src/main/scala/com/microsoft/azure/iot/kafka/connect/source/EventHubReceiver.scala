@@ -15,8 +15,8 @@ class EventHubReceiver(val connectionString: String, val receiverConsumerGroup: 
 
   private[this] var isClosing = false
 
-  private val executorService = Executors.newSingleThreadExecutor()
-  private val eventHubClient = EventHubClient.createSync(connectionString, executorService)
+  private val executorService = Executors.newScheduledThreadPool(1)
+  private val eventHubClient = EventHubClient.createFromConnectionStringSync(connectionString, executorService)
   if (eventHubClient == null) {
     throw new IllegalArgumentException("Unable to create EventHubClient from the input parameters.")
   }

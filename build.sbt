@@ -1,25 +1,26 @@
 // Copyright (c) Microsoft. All rights reserved.
 
-val iotHubKafkaConnectVersion = "0.7.0"
+val iotHubKafkaConnectVersion = "0.8.1"
 
 name := "kafka-connect-iothub"
 organization := "com.microsoft.azure.iot"
 version := iotHubKafkaConnectVersion
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.13.1"
 
 scalacOptions ++= Seq("-deprecation", "-explaintypes", "-unchecked", "-feature")
 
 libraryDependencies ++= {
 
-  val kafkaVersion = "0.10.2.1"
-  val azureEventHubSDKVersion = "1.0.0"
-  val scalaLoggingVersion = "3.5.0"
-  val logbackClassicVersion = "1.1.7"
-  val scalaTestVersion = "3.0.0"
-  val configVersion = "1.3.1"
-  val json4sVersion = "3.5.0"
-  val iotHubServiceClientVersion = "1.4.22"
+  val kafkaVersion = "2.4.1"
+  val azureEventHubSDKVersion = "3.1.1"
+  val scalaLoggingVersion = "3.9.2"
+  val logbackClassicVersion = "1.2.3"
+  val scalaTestVersion = "3.1.1"
+  val configVersion = "1.4.0"
+  val json4sVersion = "3.6.7"
+  val iotHubServiceClientVersion = "1.21.1"
+  val jakartaWsRsVersion = "2.1.6"
 
   Seq(
     "org.apache.kafka" % "connect-api" % kafkaVersion % "provided",
@@ -29,14 +30,15 @@ libraryDependencies ++= {
     "org.json4s" %% "json4s-jackson" % json4sVersion,
     "com.typesafe.scala-logging" %% "scala-logging" % scalaLoggingVersion,
     "com.microsoft.azure.sdk.iot" % "iot-service-client" % iotHubServiceClientVersion,
+    "jakarta.ws.rs" % "jakarta.ws.rs-api" % jakartaWsRsVersion,
 
     // Test dependencies
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
     "com.typesafe" % "config" % configVersion % "test"
-  )
+  ).map(_ exclude("javax.ws.rs", "javax.ws.rs-api"))
 }
 
-assemblyJarName in assembly := s"kafka-connect-iothub-assembly_2.11-$iotHubKafkaConnectVersion.jar"
+assemblyJarName in assembly := s"kafka-connect-iothub-assembly_2.13-$iotHubKafkaConnectVersion.jar"
 
 publishArtifact in Test := true
 publishArtifact in(Compile, packageDoc) := true
@@ -49,11 +51,16 @@ licenses += ("MIT", url("https://github.com/Azure/toketi-kafka-connect-iothub/bl
 publishMavenStyle := true
 
 // Bintray: Organization > Repository > Package > Version
-bintrayOrganization := Some("microsoftazuretoketi")
-bintrayRepository := "toketi-repo"
-bintrayPackage := "kafka-connect-iothub"
-bintrayReleaseOnPublish in ThisBuild := true
-
+// bintrayOrganization := Some("microsoftazuretoketi")
+// bintrayRepository := "toketi-repo"
+// bintrayPackage := "kafka-connect-iothub"
+// bintrayReleaseOnPublish in ThisBuild := true
+assemblyMergeStrategy in assembly := {
+  case "module-info.class" => MergeStrategy.discard
+  case x =>
+    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    oldStrategy(x)
+}
 // Required in Sonatype
 pomExtra :=
     <url>https://github.com/Azure/toketi-kafka-connect-iothub</url>

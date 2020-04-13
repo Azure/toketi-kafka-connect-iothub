@@ -63,7 +63,7 @@ class IotHubSourceTaskTest extends FlatSpec with GivenWhenThen with JsonSerializ
     Then("Data receiver should be properly initialized")
     assert(task.partitionSources.length == 3)
     assert(!task.partitionSources.exists(s => s.dataReceiver == null))
-    for (ps ← task.partitionSources) {
+    for (ps <- task.partitionSources) {
       val dataReceiver = ps.dataReceiver.asInstanceOf[MockDataReceiver]
       assert(dataReceiver.offset.isDefined)
       assert(dataReceiver.startTime.isEmpty)
@@ -85,7 +85,7 @@ class IotHubSourceTaskTest extends FlatSpec with GivenWhenThen with JsonSerializ
     Then("Data receiver should be properly initialized, with StartTime, while Offsets value should be ignored")
     assert(task.partitionSources.length == 3)
     assert(!task.partitionSources.exists(s => s.dataReceiver == null))
-    for (ps ← task.partitionSources) {
+    for (ps <- task.partitionSources) {
       val dataReceiver = ps.dataReceiver.asInstanceOf[MockDataReceiver]
       assert(dataReceiver.offset.isEmpty)
       assert(dataReceiver.startTime.isDefined)
